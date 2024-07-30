@@ -3,6 +3,7 @@ import { ref, unref, h, onMounted, computed, nextTick, watch } from 'vue'
 import { RouterLink, RouterView } from 'vue-router'
 import { NButton, createDiscreteApi } from 'naive-ui'
 import { getCaseList, insertCase, removeCase, editCase as editCaseApi } from '@/api/case'
+import { getTrigramInfo } from '@/api/trigram'
 import { trigram_r } from '@/static/trigram.js'
 import lunisolar from 'lunisolar'
 import { isMobile } from '@/utils'
@@ -35,6 +36,7 @@ const luni = ref({
   gzTime: '',
   normalTime: ''
 })
+const origin_trigram_detail = ref(null)
 const searchProblem = ref('')
 const formRef = ref(null)
 
@@ -43,7 +45,7 @@ function createColumns({ play }) {
     ? [
         {
           title: '卦题',
-          key: 'problem',
+          key: 'problem'
         },
         {
           title: '对错',
@@ -99,14 +101,14 @@ function createColumns({ play }) {
           title: '卦题',
           key: 'problem'
         },
-        {
-          title: '性别',
-          key: 'gender',
-          width: 80,
-          render(row) {
-            return row.gender ? '男' : '女'
-          }
-        },
+        // {
+        //   title: '性别',
+        //   key: 'gender',
+        //   width: 80,
+        //   render(row) {
+        //     return row.gender ? '男' : '女'
+        //   }
+        // },
         {
           title: '动爻',
           key: 'shift_yao',
@@ -145,11 +147,11 @@ function createColumns({ play }) {
           title: '提示',
           key: 'hint'
         },
-        {
-          title: '外应',
-          key: 'outside_react',
-          width: 80
-        },
+        // {
+        //   title: '外应',
+        //   key: 'outside_react',
+        //   width: 80
+        // },
         {
           title: '预测',
           key: 'prediction',
@@ -281,11 +283,34 @@ const rules = {
 }
 
 // 暂时不存卦的序号，用名称来
-const trigramOptions = trigram_r.map((i) => ({ label: i.trigram, value: i.trigram }))
+const trigramOptions = trigram_r.map((i) => ({
+  label: i.trigram,
+  value: i.trigram,
+  trigram_num: i.trigram_num
+}))
 
 const modalTitle = computed(() => {
   return modalMode.value === 'add' ? '新增案例' : '编辑案例'
 })
+
+const onOriginTrigramUpdate = (_, { trigram_num }) => {
+  console.log(trigram_num)
+  getTrigramInfo({ trigram_num }).then((res) => {
+    console.log(res)
+    origin_trigram_detail.value = res.data
+    caseForm.value.mid_trigram = res.data.mid_trigram
+    if (caseForm.value.shift_yao) {
+      caseForm.value.final_trigram = res.data[`final_trigram_${caseForm.value.shift_yao}`]
+    }
+  })
+}
+
+const onYaoUpdate = (val) => {
+  console.log(val)
+  if (caseForm.value.origin_trigram) {
+    caseForm.value.final_trigram = origin_trigram_detail.value[`final_trigram_${val}`]
+  }
+}
 
 const addCase = () => {
   modalMode.value = 'add'
@@ -398,6 +423,7 @@ watch(
                 :min="1"
                 :max="6"
                 placeholder="输入动爻"
+                @update:value="onYaoUpdate"
               />
             </n-form-item>
             <n-form-item label="主卦" path="origin_trigram">
@@ -405,6 +431,7 @@ watch(
                 v-model:value="caseForm.origin_trigram"
                 :options="trigramOptions"
                 placeholder="选择主卦"
+                @update:value="onOriginTrigramUpdate"
                 filterable
               />
             </n-form-item>
@@ -414,6 +441,7 @@ watch(
                 :options="trigramOptions"
                 placeholder="选择互卦"
                 filterable
+                disabled
               />
             </n-form-item>
             <n-form-item label="变卦" path="final_trigram">
@@ -422,6 +450,14 @@ watch(
                 :options="trigramOptions"
                 placeholder="选择变卦"
                 filterable
+                disabled
+              />
+            </n-form-item>
+            <n-form-item label="爻辞" path="yao_content">
+              <n-input
+                v-model:value="caseForm.yao_content"
+                type="textarea"
+                readonly
               />
             </n-form-item>
             <n-form-item label="干支" path="gz_time">
@@ -508,16 +544,13 @@ watch(
         </template>
       </n-card>
     </n-modal>
-    <div>
-      <n-data-table
-        :columns="columns"
-        :data="tableData"
-        :pagination="pagination"
-        :bordered="true"
-        max-height="70vh"
-        striped
-      />
-    </div>
+    <n-data-table
+      :columns="columns"
+      :data="tableData"
+      :pagination="pagination"
+      :bordered="true"
+      striped
+    />
   </main>
 </template>
 <style scoped lang="less">
