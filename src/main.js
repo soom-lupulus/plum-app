@@ -24,12 +24,13 @@ import {
     NDivider,
     NSpace,
     NRadioGroup,
-    NRadio
+    NRadio,
+    NAlert
 } from 'naive-ui'
 
 const naive = create({
     components: [NButton, NTable, NDataTable, NCard, NModal, NForm, NFormItem, NInput,
-        NInputNumber, NSelect, NIcon, NDivider, NSpace, NRadioGroup, NRadio]
+        NInputNumber, NSelect, NIcon, NDivider, NSpace, NRadioGroup, NRadio, NAlert]
 })
 const app = createApp(App)
 

@@ -453,13 +453,13 @@ watch(
                 disabled
               />
             </n-form-item>
-            <n-form-item label="爻辞" path="yao_content">
+            <!-- <n-form-item label="爻辞" path="yao_content">
               <n-input
                 v-model:value="caseForm.yao_content"
                 type="textarea"
                 readonly
               />
-            </n-form-item>
+            </n-form-item> -->
             <n-form-item label="干支" path="gz_time">
               <n-input v-model:value="caseForm.gz_time" placeholder="干支时间" />
             </n-form-item>
@@ -549,6 +549,7 @@ watch(
       :data="tableData"
       :pagination="pagination"
       :bordered="true"
+      max-height="70vh"
       striped
     />
   </main>
