@@ -9,6 +9,7 @@ import { isMobile } from '@/utils'
 import { debounce } from 'lodash'
 import { CheckCircleRegular, TimesCircleRegular, QuestionCircleRegular } from '@vicons/fa'
 import AmendContent from './AmendContent.vue'
+import TrigramDetail from './TrigramDetail.vue'
 
 const { message, dialog } = createDiscreteApi(['message', 'dialog'])
 const tableData = ref([])
@@ -330,7 +331,15 @@ watch(
       />
     </n-space>
     <n-modal v-model:show="showModal" :on-after-leave="handleClose">
+      <trigram-detail
+        v-if="modalMode === 'info'"
+        :modalMode="modalMode"
+        :formData="formData"
+        @handleClose="handleClose"
+        @getInfo="getInfo"
+      ></trigram-detail>
       <amend-content
+        v-else
         :modalMode="modalMode"
         :formData="formData"
         @handleClose="handleClose"
