@@ -3,19 +3,13 @@ import { ref, unref, h, onMounted, computed, nextTick, watch } from 'vue'
 import { RouterLink, RouterView } from 'vue-router'
 import { NButton, createDiscreteApi } from 'naive-ui'
 import { getCaseList, insertCase, removeCase, editCase as editCaseApi } from '@/api/case'
-import { getTrigramInfo } from '@/api/trigram'
-import { trigram_r } from '@/static/trigram.js'
 import { isMobile } from '@/utils'
 import { debounce } from 'lodash'
 import { CheckCircleRegular, TimesCircleRegular, QuestionCircleRegular } from '@vicons/fa'
 import AmendContent from './AmendContent.vue'
 import TrigramDetail from './TrigramDetail.vue'
 
-const { message, dialog } = createDiscreteApi(['message', 'dialog'])
-const tableData = ref([])
-const showModal = ref(false)
-const modalMode = ref('add')
-const formData = ref({
+const defaultFormData = {
   problem: '',
   shift_yao: null,
   origin_trigram: '',
@@ -23,6 +17,9 @@ const formData = ref({
   final_trigram: '',
   gz_time: '',
   d_time: '',
+  c_time: '',
+  missing: '',
+  category: '',
   gender: null,
   hint: '',
   outside_react: '',
@@ -31,9 +28,13 @@ const formData = ref({
   correct: null,
   pre_desc: '',
   rethink: ''
-})
+}
+const { message, dialog } = createDiscreteApi(['message', 'dialog'])
+const tableData = ref([])
+const showModal = ref(false)
+const modalMode = ref('add')
+const formData = ref(defaultFormData)
 
-const origin_trigram_detail = ref(null)
 const searchProblem = ref('')
 
 function createColumns({ play }) {
@@ -237,33 +238,12 @@ const columns = ref(
   })
 )
 
-// 暂时不存卦的序号，用名称来
-const trigramOptions = trigram_r.map((i) => ({
-  label: i.trigram,
-  value: i.trigram,
-  trigram_num: i.trigram_num
-}))
+
 
 const addCase = () => {
   modalMode.value = 'add'
   showModal.value = true
-  formData.value = {
-    problem: '',
-    shift_yao: null,
-    origin_trigram: '',
-    mid_trigram: '',
-    final_trigram: '',
-    gz_time: '',
-    d_time: '',
-    gender: null,
-    hint: '',
-    outside_react: '',
-    prediction: '',
-    result: '',
-    correct: null,
-    pre_desc: '',
-    rethink: ''
-  }
+  formData.value = defaultFormData
 }
 
 const editCase = (row) => {
@@ -280,23 +260,7 @@ const showCase = (row) => {
 
 const handleClose = () => {
   showModal.value = false
-  formData.value = {
-    problem: '',
-    shift_yao: null,
-    origin_trigram: '',
-    mid_trigram: '',
-    final_trigram: '',
-    gz_time: '',
-    d_time: '',
-    gender: null,
-    hint: '',
-    outside_react: '',
-    prediction: '',
-    result: '',
-    correct: null,
-    pre_desc: '',
-    rethink: ''
-  }
+  formData.value = defaultFormData
 }
 
 const getInfo = (params) => {
@@ -335,6 +299,7 @@ watch(
         v-if="modalMode === 'info'"
         :modalMode="modalMode"
         :formData="formData"
+        :defaultFormData="defaultFormData"
         @handleClose="handleClose"
         @getInfo="getInfo"
       ></trigram-detail>
@@ -342,6 +307,7 @@ watch(
         v-else
         :modalMode="modalMode"
         :formData="formData"
+        :defaultFormData="defaultFormData"
         @handleClose="handleClose"
         @getInfo="getInfo"
       ></amend-content>

@@ -3,38 +3,31 @@ import { ref, unref, h, watch, computed, defineProps, defineEmits } from 'vue'
 import { insertCase, editCase as editCaseApi } from '@/api/case'
 import { createDiscreteApi } from 'naive-ui'
 import lunisolar from 'lunisolar'
+import { trigram_r } from '@/static/trigram.js'
+import { getTrigramInfo } from '@/api/trigram'
+import dayjs from 'dayjs'
 
+const props = defineProps({
+  modalMode: String,
+  formData: Object,
+  defaultFormData: Object
+})
+const emit = defineEmits(['handleClose', 'getInfo'])
+
+const origin_trigram_detail = ref(null)
 const luni = ref({
   lunarTime: '',
   gzTime: '',
-  normalTime: ''
+  normalTime: '',
+  beforeSolarTerm: '',
+  afterSolarTerm: '',
 })
 const { message, dialog } = createDiscreteApi(['message', 'dialog'])
-const caseForm = ref({
-  problem: '',
-  shift_yao: null,
-  origin_trigram: '',
-  mid_trigram: '',
-  final_trigram: '',
-  gz_time: '',
-  d_time: '',
-  gender: null,
-  hint: '',
-  outside_react: '',
-  prediction: '',
-  result: '',
-  correct: null,
-  pre_desc: '',
-  rethink: ''
-})
+const caseForm = ref(props.defaultFormData)
 const modalTitle = computed(() => {
   return props.modalMode === 'add' ? '新增案例' : '编辑案例'
 })
-const props = defineProps({
-  modalMode: String,
-  formData: Object
-})
-const emit = defineEmits(['handleClose', 'getInfo'])
+
 //
 const formRef = ref(null)
 const rules = {
@@ -99,6 +92,23 @@ const handleConfirm = async () => {
   }
 }
 
+// 暂时不存卦的序号，用名称来
+const trigramOptions = trigram_r.map((i) => ({
+  label: i.trigram,
+  value: i.trigram,
+  trigram_num: i.trigram_num
+}))
+const trigramCategoryOptions = [
+  {
+    label: '先天卦',
+    value: 0
+  },
+  {
+    label: '后天卦',
+    value: 1
+  },
+]
+
 const onOriginTrigramUpdate = (_, { trigram_num }) => {
   console.log(trigram_num)
   getTrigramInfo({ trigram_num }).then((res) => {
@@ -123,13 +133,22 @@ watch(
   (val, oldV) => {
     if (props.modalMode === 'add') {
       const d = lunisolar(new Date())
+      const beforeSolarTerm = lunisolar().recentSolarTerm(0)
+      const afterSolarTerm = lunisolar().recentSolarTerm(1)
       luni.value = {
         lunarTime: d.format('lY年 lM(lL)lD lH時'), // 可取得阴历日期 '二〇二二年 六月(大)二十 未時'
         gzTime: d.format('cY cM cD cH'), // 可取得八字：'壬寅 丁未 壬申 丁未'
-        normalTime: d.format('YYYY-MM-DD HH:mm:ss') // 2022-07-18 14:40:00
+        normalTime: d.format('YYYY-MM-DD HH:mm:ss'), // 2022-07-18 14:40:00
+        beforeSolarTermName: beforeSolarTerm[0].name,
+        beforeSolarTermTime: dayjs(Date.parse(beforeSolarTerm[1])).format("YYYY.MM.DD"),
+        afterSolarTermName: afterSolarTerm[0].name,
+        afterSolarTermTime: dayjs(Date.parse(afterSolarTerm[1])).format("YYYY.MM.DD"),
       }
       caseForm.value.gz_time = unref(luni.value.gzTime)
       caseForm.value.d_time = unref(luni.value.lunarTime)
+      caseForm.value.c_time = lunisolar().format('YYYY-MM-DD  HH:mm:ss')
+      caseForm.value.missing = lunisolar().char8.year.missing.toString().replace(',','') + ' ' + lunisolar().char8.month.missing.toString().replace(',','') + ' ' + lunisolar().char8.day.missing.toString().replace(',','') + ' ' + lunisolar().char8.hour.missing.toString().replace(',','')
+      caseForm.value.solarTerm = unref(luni).beforeSolarTermName + unref(luni).beforeSolarTermTime + '~' + unref(luni).afterSolarTermName + unref(luni).afterSolarTermTime
       // nextTick(() => {})
     } else if (props.modalMode === 'edit') {
       caseForm.value = props.formData
@@ -151,6 +170,13 @@ watch(
       <n-form ref="formRef" :label-width="80" :model="caseForm" :rules="rules" :size="size">
         <n-form-item label="卦题" path="problem">
           <n-input v-model:value="caseForm.problem" placeholder="请输入问题" />
+        </n-form-item>
+        <n-form-item label="卦式" path="category">
+          <n-select
+            v-model:value="caseForm.category"
+            :options="trigramCategoryOptions"
+            placeholder="请选择卦式"
+          />
         </n-form-item>
         <n-form-item label="动爻" path="shift_yao">
           <n-input-number
@@ -198,8 +224,17 @@ watch(
         <n-form-item label="干支" path="gz_time">
           <n-input v-model:value="caseForm.gz_time" placeholder="干支时间" />
         </n-form-item>
-        <n-form-item label="时间" path="d_time">
-          <n-input v-model:value="caseForm.d_time" placeholder="电话号码" />
+        <n-form-item label="农历" path="d_time">
+          <n-input v-model:value="caseForm.d_time" placeholder="时间" />
+        </n-form-item>
+        <n-form-item label="阳历" path="c_time">
+          <n-input v-model:value="caseForm.c_time" placeholder="时间" />
+        </n-form-item>
+        <n-form-item label="空亡" path="missing">
+          <n-input v-model:value="caseForm.missing" placeholder="地支空亡" />
+        </n-form-item>
+        <n-form-item label="节气" path="solarTerm">
+          <n-input v-model:value="caseForm.solarTerm" placeholder="节气" />
         </n-form-item>
         <n-form-item label="性别" path="gender">
           <n-select
