@@ -1,5 +1,5 @@
 <script setup lang="jsx">
-import { ref, unref, h, onMounted, computed, nextTick, watch } from 'vue'
+import { ref, unref, h, onMounted, computed, nextTick, watch, defineEmits } from 'vue'
 // import theGods from 'lunisolar/plugins/theGods'
 import { getEightTrigramInfo } from '@/api/eightTirgram'
 import lunisolar from 'lunisolar'
@@ -11,6 +11,8 @@ const props = defineProps({
   modalMode: String,
   formData: Object
 })
+const emit = defineEmits(['handleClose'])
+
 console.log(lunisolar().char8.year);
 
 const eightTrigramArr = ref([])
@@ -54,9 +56,6 @@ const wuxingColor = wuxing => {
   }
   return maps[wuxing]
 }
-
-
-console.log(gz_timeArr);
 const TIME_ARR = ['年', '月', '日', '时']
 
 onMounted(() => {
@@ -80,7 +79,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <n-card style="width: 600px" :bordered="false" size="huge" role="dialog" aria-modal="true">
+  <n-card closable @close="emit('handleClose')" style="width: 600px" :bordered="false" size="huge" role="dialog" aria-modal="true">
     <table class="d-table">
       <tbody>
         <tr>
@@ -167,7 +166,7 @@ onMounted(() => {
                 <div :class="wuxingColor(currentEightTrigram[5]?.wuxing)">{{ currentEightTrigram[5]?.wuxing }}</div>
               </div>
             </div>
-            <p>爻辞</p>
+            <!-- <p>爻辞</p> -->
             <div class="word_box">
               <article>
                 {{ trigramInfo?.[currentActiveTrigram].trigram_content }}
@@ -293,6 +292,7 @@ tfoot td {
 }
 
 .word_box {
+  padding-top: 10px;
   article {
     display: flex;
     flex-direction: column;
