@@ -10,7 +10,7 @@ import dayjs from 'dayjs'
 const props = defineProps({
   modalMode: String,
   formData: Object,
-  defaultFormData: Object
+  getDefaultFormData: Function
 })
 const emit = defineEmits(['handleClose', 'getInfo'])
 
@@ -23,7 +23,7 @@ const luni = ref({
   afterSolarTerm: '',
 })
 const { message, dialog } = createDiscreteApi(['message', 'dialog'])
-const caseForm = ref(props.defaultFormData)
+const caseForm = ref(props.getDefaultFormData())
 const modalTitle = computed(() => {
   return props.modalMode === 'add' ? '新增案例' : '编辑案例'
 })
@@ -129,7 +129,7 @@ const onYaoUpdate = (val) => {
 }
 
 watch(
-  () => props.formData,
+  () => props.modalMode,
   (val, oldV) => {
     if (props.modalMode === 'add') {
       const d = lunisolar(new Date())

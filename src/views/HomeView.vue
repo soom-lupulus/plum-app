@@ -9,7 +9,7 @@ import { CheckCircleRegular, TimesCircleRegular, QuestionCircleRegular } from '@
 import AmendContent from './AmendContent.vue'
 import TrigramDetail from './TrigramDetail.vue'
 
-const defaultFormData = {
+const getDefaultFormData = () => ({
   problem: '',
   shift_yao: null,
   origin_trigram: '',
@@ -28,12 +28,12 @@ const defaultFormData = {
   correct: null,
   pre_desc: '',
   rethink: ''
-}
+})
 const { message, dialog } = createDiscreteApi(['message', 'dialog'])
 const tableData = ref([])
 const showModal = ref(false)
 const modalMode = ref('add')
-const formData = ref(defaultFormData)
+const formData = ref(getDefaultFormData())
 
 const searchProblem = ref('')
 
@@ -243,7 +243,7 @@ const columns = ref(
 const addCase = () => {
   modalMode.value = 'add'
   showModal.value = true
-  formData.value = defaultFormData
+  formData.value = getDefaultFormData()
 }
 
 const editCase = (row) => {
@@ -260,7 +260,7 @@ const showCase = (row) => {
 
 const handleClose = () => {
   showModal.value = false
-  formData.value = defaultFormData
+  formData.value = getDefaultFormData()
 }
 
 const getInfo = (params) => {
@@ -299,7 +299,7 @@ watch(
         v-if="modalMode === 'info'"
         :modalMode="modalMode"
         :formData="formData"
-        :defaultFormData="defaultFormData"
+        :getDefaultFormData="getDefaultFormData"
         @handleClose="handleClose"
         @getInfo="getInfo"
       ></trigram-detail>
@@ -307,7 +307,7 @@ watch(
         v-else
         :modalMode="modalMode"
         :formData="formData"
-        :defaultFormData="defaultFormData"
+        :getDefaultFormData="getDefaultFormData"
         @handleClose="handleClose"
         @getInfo="getInfo"
       ></amend-content>
