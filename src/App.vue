@@ -1,16 +1,4 @@
 <script setup>
-import { onMounted } from 'vue'
-import { useRouter } from 'vue-router';
-const router = useRouter()
-// 登录鉴权
-const checkUser = () => {
-  const ps = localStorage.getItem('ygg')
-  if(ps !== 'yggisygg'){
-    router.replace('/error')
-  }
-}
-
-checkUser()
 </script>
 <template>
   <header>
