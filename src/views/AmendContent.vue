@@ -296,24 +296,17 @@ watch(
             @update:value="onYaoUpdate" />
         </n-form-item>
         <n-form-item label="主卦" path="origin_trigram">
-          <n-select v-model:value="caseForm.origin_trigram" :options="trigramOptions" placeholder="选择主卦"
+          <n-select v-model:value="caseForm.origin_trigram" :options="trigramOptions" placeholder="请选择主卦"
             @update:value="onOriginTrigramUpdate" filterable />
         </n-form-item>
         <n-form-item label="互卦" path="mid_trigram">
-          <n-select v-model:value="caseForm.mid_trigram" :options="trigramOptions" placeholder="选择互卦" filterable
+          <n-select v-model:value="caseForm.mid_trigram" :options="trigramOptions" placeholder="请选择互卦" filterable
             disabled />
         </n-form-item>
         <n-form-item label="变卦" path="final_trigram">
-          <n-select v-model:value="caseForm.final_trigram" :options="trigramOptions" placeholder="选择变卦" filterable
+          <n-select v-model:value="caseForm.final_trigram" :options="trigramOptions" placeholder="请选择变卦" filterable
             disabled />
         </n-form-item>
-        <!-- <n-form-item label="爻辞" path="yao_content">
-              <n-input
-                v-model:value="caseForm.yao_content"
-                type="textarea"
-                readonly
-              />
-            </n-form-item> -->
         <n-form-item label="干支" path="gz_time">
           <n-input v-model:value="caseForm.gz_time" placeholder="干支时间" />
         </n-form-item>
@@ -350,13 +343,13 @@ watch(
         <n-form-item label="预测" path="prediction">
           <n-input v-model:value="caseForm.prediction" type="textarea" placeholder="请输入预测结果" />
         </n-form-item>
-        <n-form-item label="断卦思路" path="pre_desc">
+        <!-- <n-form-item label="断卦思路" path="pre_desc">
           <n-input v-model:value="caseForm.pre_desc" type="textarea" placeholder="请输入断卦的思路" />
-        </n-form-item>
-        <n-divider v-text="'卦后'" title-placement="right" />
-        <n-form-item label="卦后反思" path="rethink">
+        </n-form-item> -->
+        <n-divider title-placement="left"></n-divider>
+        <!-- <n-form-item label="卦后反思" path="rethink">
           <n-input v-model:value="caseForm.rethink" type="textarea" placeholder="请输入断卦的反思收获" />
-        </n-form-item>
+        </n-form-item> -->
         <n-form-item label="反馈" path="result">
           <n-input v-model:value="caseForm.result" type="textarea" placeholder="请输入实际的结果" />
         </n-form-item>

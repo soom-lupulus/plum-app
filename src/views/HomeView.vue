@@ -18,15 +18,15 @@ const route = useRoute()
 const getDefaultFormData = () => ({
   problem: '',
   shift_yao: null,
-  origin_trigram: '',
-  mid_trigram: '',
-  final_trigram: '',
+  origin_trigram: undefined, // 选择框必须设置undefined才能显示placeholder
+  mid_trigram: undefined,
+  final_trigram: undefined,
   gz_time: '',
   d_time: '',
   c_time: '',
   missing: '',
-  category: '',
-  gender: null,
+  category: 0, // 默认先天
+  gender: 1, // 默认男生
   hint: '',
   outside_react: '',
   prediction: '',

@@ -113,6 +113,10 @@ onMounted(() => {
           <td style="text-align: center;" v-for="(i, index) in (props.formData.missing || '- - - -').split(' ')"
             :key="i + index">{{ i }}</td>
         </tr>
+        <tr>
+          <th scope="row">结果</th>
+          <td colspan="4">{{ props.formData.result || '-' }}</td>
+        </tr>
         <!-- <tr>
           <th scope="row">策轨</th>
           <td colspan="2">策数：6 7 3 8</td>
@@ -253,6 +257,7 @@ tfoot {
 
 th {
   color: #4f795f;
+  min-width: 50px;
 }
 
 th,
