@@ -31,7 +31,7 @@ const singleTrigramArr = computed(() => {
   const { origin_trigram, mid_trigram, final_trigram } = props.formData
   return ((isPure(origin_trigram) ? origin_trigram.slice(-1).repeat(2) : origin_trigram.slice(0, 2)) +
     (isPure(mid_trigram) ? mid_trigram.slice(-1).repeat(2) : mid_trigram.slice(0, 2)) +
-      (isPure(final_trigram) ? final_trigram.slice(-1).repeat(2) : final_trigram.slice(0, 2))
+    (isPure(final_trigram) ? final_trigram.slice(-1).repeat(2) : final_trigram.slice(0, 2))
   ).split('')
   // return (props.formData.origin_trigram.slice(0, 2) + props.formData.mid_trigram.slice(0, 2) + props.formData.final_trigram.slice(0, 2)).split('')
 })
@@ -79,7 +79,8 @@ onMounted(() => {
 </script>
 
 <template>
-  <n-card closable @close="emit('handleClose')" style="width: 600px" :bordered="false" size="huge" role="dialog" aria-modal="true">
+  <n-card closable @close="emit('handleClose')" style="width: 600px" :bordered="false" size="huge" role="dialog"
+    aria-modal="true">
     <table class="d-table">
       <tbody>
         <tr>
@@ -104,12 +105,13 @@ onMounted(() => {
         </tr>
         <tr>
           <th scope="row">干支</th>
-          <td v-for="(i, index) in gz_timeArr" style="font-weight: bold;text-align: center;"
+          <td v-for="(i, index) in gz_timeArr" :key="i + index" style="font-weight: bold;text-align: center;"
             :style="(index === 2 || index === 1) && { color: '#8B0000' }">{{ i + TIME_ARR[index] }}</td>
         </tr>
         <tr>
           <th scope="row">空亡</th>
-          <td style="text-align: center;" v-for="i in (props.formData.missing || '- - - -').split(' ')">{{ i }}</td>
+          <td style="text-align: center;" v-for="(i, index) in (props.formData.missing || '- - - -').split(' ')"
+            :key="i + index">{{ i }}</td>
         </tr>
         <!-- <tr>
           <th scope="row">策轨</th>
@@ -293,6 +295,7 @@ tfoot td {
 
 .word_box {
   padding-top: 10px;
+
   article {
     display: flex;
     flex-direction: column;
