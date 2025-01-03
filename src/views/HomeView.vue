@@ -1,6 +1,6 @@
 <script setup lang="jsx">
 import { ref, unref, h, onMounted, computed, nextTick, watch } from 'vue'
-import { RouterLink, RouterView } from 'vue-router'
+import { RouterLink, RouterView, useRouter, useRoute } from 'vue-router'
 import { NButton, createDiscreteApi } from 'naive-ui'
 import { getCaseList, insertCase, removeCase, editCase as editCaseApi } from '@/api/case'
 import { isMobile } from '@/utils'
@@ -8,7 +8,13 @@ import { debounce } from 'lodash'
 import { CheckCircleRegular, TimesCircleRegular, QuestionCircleRegular } from '@vicons/fa'
 import AmendContent from './AmendContent.vue'
 import TrigramDetail from './TrigramDetail.vue'
+import { useUserStore } from '@/stores'
+import router from '@/router'
 
+const userStore = useUserStore()
+console.log(userStore.userInfo);
+
+const route = useRoute()
 const getDefaultFormData = () => ({
   problem: '',
   shift_yao: null,
@@ -40,175 +46,175 @@ const searchProblem = ref('')
 function createColumns({ play }) {
   return !!isMobile()
     ? [
-        {
-          title: '卦题',
-          key: 'problem'
-        },
-        {
-          title: '对错',
-          width: 60,
-          key: 'correct',
-          render({ correct }) {
-            return typeof correct === 'number' ? (
-              correct ? (
-                <n-icon size="20" color="#499b70">
-                  <CheckCircleRegular />
-                </n-icon>
-              ) : (
-                <n-icon size="20" color="#d03050">
-                  <TimesCircleRegular />
-                </n-icon>
-              )
+      {
+        title: '卦题',
+        key: 'problem'
+      },
+      {
+        title: '对错',
+        width: 60,
+        key: 'correct',
+        render({ correct }) {
+          return typeof correct === 'number' ? (
+            correct ? (
+              <n-icon size="20" color="#499b70">
+                <CheckCircleRegular />
+              </n-icon>
             ) : (
-              <n-icon size="20" color="#f6cc55">
-                <QuestionCircleRegular />
+              <n-icon size="20" color="#d03050">
+                <TimesCircleRegular />
               </n-icon>
             )
-          }
-        },
-        {
-          title: '操作',
-          key: 'actions',
-          width: 80,
-          render(row) {
-            return (
-              <n-space>
-                {/* <n-button size="small" onClick={() => play('info', row)}>
+          ) : (
+            <n-icon size="20" color="#f6cc55">
+              <QuestionCircleRegular />
+            </n-icon>
+          )
+        }
+      },
+      {
+        title: '操作',
+        key: 'actions',
+        width: 80,
+        render(row) {
+          return (
+            <n-space>
+              {/* <n-button size="small" onClick={() => play('info', row)}>
               查看
             </n-button> */}
-                <n-button size="small" strong secondary onClick={() => play('info', row)}>
-                  查看
-                </n-button>
-                <n-button size="small" strong secondary onClick={() => play('edit', row)}>
-                  修改
-                </n-button>
-                <n-button
-                  size="small"
-                  strong
-                  secondary
-                  type="error"
-                  onClick={() => play('remove', row)}
-                >
-                  删除
-                </n-button>
-              </n-space>
-            )
-          }
+              <n-button size="small" strong secondary onClick={() => play('info', row)}>
+                查看
+              </n-button>
+              <n-button size="small" strong secondary onClick={() => play('edit', row)}>
+                修改
+              </n-button>
+              <n-button
+                size="small"
+                strong
+                secondary
+                type="error"
+                onClick={() => play('remove', row)}
+              >
+                删除
+              </n-button>
+            </n-space>
+          )
         }
-      ]
+      }
+    ]
     : [
-        {
-          title: '卦题',
-          key: 'problem'
-        },
-        // {
-        //   title: '性别',
-        //   key: 'gender',
-        //   width: 80,
-        //   render(row) {
-        //     return row.gender ? '男' : '女'
-        //   }
-        // },
-        {
-          title: '动爻',
-          key: 'shift_yao',
-          width: 80
-        },
-        {
-          title: '主卦',
-          key: 'origin_trigram',
-          width: 100
-        },
-        {
-          title: '互卦',
-          key: 'mid_trigram',
-          width: 100
-        },
-        {
-          title: '变卦',
-          key: 'final_trigram',
-          width: 100
-        },
-        {
-          title: '干支',
-          key: 'gz_time',
-          ellipsis: {
-            tooltip: true
-          }
-        },
-        {
-          title: '时间（农）',
-          key: 'd_time',
-          ellipsis: {
-            tooltip: true
-          }
-        },
-        {
-          title: '提示',
-          key: 'hint'
-        },
-        // {
-        //   title: '外应',
-        //   key: 'outside_react',
-        //   width: 80
-        // },
-        {
-          title: '预测',
-          key: 'prediction',
-          ellipsis: {
-            tooltip: true
-          }
-        },
-        {
-          title: '反馈',
-          key: 'result',
-          ellipsis: {
-            tooltip: true
-          }
-        },
-        {
-          title: '对错',
-          key: 'correct',
-          width: 80,
-          render({ correct }) {
-            return !!correct ? '正确' : '错误'
-          }
-        },
-        // {
-        //   title: '断卦逻辑',
-        //   key: 'pre_desc'
-        // },
-        // {
-        //   title: '反思',
-        //   key: 'rethink'
-        // },
-        {
-          title: '操作',
-          key: 'actions',
-          width: 150,
-          render(row) {
-            return (
-              <n-space>
-                {/* <n-button size="small" onClick={() => play('info', row)}>
+      {
+        title: '卦题',
+        key: 'problem'
+      },
+      // {
+      //   title: '性别',
+      //   key: 'gender',
+      //   width: 80,
+      //   render(row) {
+      //     return row.gender ? '男' : '女'
+      //   }
+      // },
+      {
+        title: '动爻',
+        key: 'shift_yao',
+        width: 80
+      },
+      {
+        title: '主卦',
+        key: 'origin_trigram',
+        width: 100
+      },
+      {
+        title: '互卦',
+        key: 'mid_trigram',
+        width: 100
+      },
+      {
+        title: '变卦',
+        key: 'final_trigram',
+        width: 100
+      },
+      {
+        title: '干支',
+        key: 'gz_time',
+        ellipsis: {
+          tooltip: true
+        }
+      },
+      {
+        title: '时间（农）',
+        key: 'd_time',
+        ellipsis: {
+          tooltip: true
+        }
+      },
+      {
+        title: '提示',
+        key: 'hint'
+      },
+      // {
+      //   title: '外应',
+      //   key: 'outside_react',
+      //   width: 80
+      // },
+      {
+        title: '预测',
+        key: 'prediction',
+        ellipsis: {
+          tooltip: true
+        }
+      },
+      {
+        title: '反馈',
+        key: 'result',
+        ellipsis: {
+          tooltip: true
+        }
+      },
+      {
+        title: '对错',
+        key: 'correct',
+        width: 80,
+        render({ correct }) {
+          return !!correct ? '正确' : '错误'
+        }
+      },
+      // {
+      //   title: '断卦逻辑',
+      //   key: 'pre_desc'
+      // },
+      // {
+      //   title: '反思',
+      //   key: 'rethink'
+      // },
+      {
+        title: '操作',
+        key: 'actions',
+        width: 150,
+        render(row) {
+          return (
+            <n-space>
+              {/* <n-button size="small" onClick={() => play('info', row)}>
               查看
             </n-button> */}
-                <n-button size="small" strong secondary onClick={() => play('edit', row)}>
-                  修改
-                </n-button>
-                <n-button
-                  size="small"
-                  strong
-                  secondary
-                  type="error"
-                  onClick={() => play('remove', row)}
-                >
-                  删除
-                </n-button>
-              </n-space>
-            )
-          }
+              <n-button size="small" strong secondary onClick={() => play('edit', row)}>
+                修改
+              </n-button>
+              <n-button
+                size="small"
+                strong
+                secondary
+                type="error"
+                onClick={() => play('remove', row)}
+              >
+                删除
+              </n-button>
+            </n-space>
+          )
         }
-      ]
+      }
+    ]
 }
 const columns = ref(
   createColumns({
@@ -237,6 +243,8 @@ const columns = ref(
     }
   })
 )
+
+console.log(route.params);
 
 
 
@@ -270,6 +278,12 @@ const getInfo = (params) => {
   })
 }
 
+const logout = () => {
+  localStorage.removeItem('token')
+  router.replace('/login')
+  message.warning('已退出，请重新登录！')
+}
+
 onMounted(() => {
   getInfo()
 })
@@ -287,39 +301,25 @@ watch(
   <main>
     <n-space>
       <n-button @click="addCase" class="addBtn" type="primary">新增案例</n-button>
-      <n-input
-        v-model:value="searchProblem"
-        :clearable="true"
-        type="text"
-        placeholder="请输入搜索的卦题"
-      />
+      <n-input v-model:value="searchProblem" :clearable="true" type="text" placeholder="请输入搜索的卦题" />
+      <div>
+        <n-popconfirm @positive-click="logout" negative-text="点错了" positive-text="是的">
+          <template #trigger>
+            <n-button>{{ userStore.userInfo?.user_name }}</n-button>
+          </template>
+          确定要退出吗？
+        </n-popconfirm>
+      </div>
+
     </n-space>
     <n-modal v-model:show="showModal" :on-after-leave="handleClose">
-      <trigram-detail
-        v-if="modalMode === 'info'"
-        :modalMode="modalMode"
-        :formData="formData"
-        :getDefaultFormData="getDefaultFormData"
-        @handleClose="handleClose"
-        @getInfo="getInfo"
-      ></trigram-detail>
-      <amend-content
-        v-else
-        :modalMode="modalMode"
-        :formData="formData"
-        :getDefaultFormData="getDefaultFormData"
-        @handleClose="handleClose"
-        @getInfo="getInfo"
-      ></amend-content>
+      <trigram-detail v-if="modalMode === 'info'" :modalMode="modalMode" :formData="formData"
+        :getDefaultFormData="getDefaultFormData" @handleClose="handleClose" @getInfo="getInfo"></trigram-detail>
+      <amend-content v-else :modalMode="modalMode" :formData="formData" :getDefaultFormData="getDefaultFormData"
+        @handleClose="handleClose" @getInfo="getInfo"></amend-content>
     </n-modal>
-    <n-data-table
-      :columns="columns"
-      :data="tableData"
-      :pagination="pagination"
-      :bordered="true"
-      max-height="70vh"
-      striped
-    />
+    <n-data-table :columns="columns" :data="tableData" :pagination="pagination" :bordered="true" max-height="70vh"
+      striped />
   </main>
 </template>
 <style scoped lang="less">
@@ -328,6 +328,7 @@ watch(
   overflow-y: scroll;
   padding-right: 20px;
 }
+
 main {
   .addBtn {
     margin-bottom: 20px;
@@ -340,10 +341,17 @@ main {
     background: red;
   }
 }
+
 /* 当屏幕宽度小于600px时 移动端 */
 @media screen and (max-width: 600px) {
   .container {
     background: yellow;
   }
+}
+
+.user-avatar {
+  color: yellow;
+  background-color: red;
+  cursor: pointer;
 }
 </style>

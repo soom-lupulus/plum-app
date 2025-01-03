@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
 import LoginView from '@/views/LoginView.vue'
 
 const router = createRouter({
@@ -17,25 +16,17 @@ const router = createRouter({
     {
       path: '/home',
       name: 'home',
-      component: HomeView
-    },
-    {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue')
+      component: () => import('@/views/HomeView.vue')
     }
   ]
 })
 
 router.beforeEach(async (to, from) => {
   const token = localStorage.getItem('token')
-  if(to.name === 'login'){
-    if(token) return {name: 'home'}
-  }else {
-    if(!token) return {name: 'login'}
+  if (to.name === 'login') {
+    if (token) return { name: 'home' }
+  } else {
+    if (!token) return { name: 'login' }
   }
 })
 

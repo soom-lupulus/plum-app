@@ -1,35 +1,13 @@
-# plum
+## 项目介绍
 
-This template should help get you started developing with Vue 3 in Vite.
+这是一个梅花易数爱好者积累卦例的地方
 
-## Recommended IDE Setup
+## 目前存在的问题
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+1. ~~登录过期未自动跳转~~
+2. 退出登录功能
+3. 苹果手机的卦的显示问题
+4. 卦类必填问题
+5. 减少不必要的选项（设计）
+6. 结果显示
 
-## Customize configuration
-
-See [Vite Configuration Reference](https://vitejs.dev/config/).
-
-## Project Setup
-
-```sh
-yarn
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
-yarn dev
-```
-
-### Compile and Minify for Production
-
-```sh
-yarn build
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-yarn lint
-```

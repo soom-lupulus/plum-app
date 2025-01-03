@@ -3,8 +3,10 @@ import { ref, onMounted } from 'vue'
 import { userLogin } from '@/api/user';
 import { createDiscreteApi } from 'naive-ui'
 import { useRouter } from 'vue-router';
-const { message } = createDiscreteApi(['message'])
+import { useUserStore } from '@/stores'
 
+const userStore = useUserStore()
+const { message } = createDiscreteApi(['message'])
 const router = useRouter()
 const formRef = ref(null)
 const loadingRef = ref(false)
@@ -16,8 +18,13 @@ const login = () => {
     loadingRef.value = true
     userLogin(loginForm.value).then(({ data, msg }) => {
         message.success(msg)
-        localStorage.setItem('token', data)
-        router.replace('/home')
+        localStorage.setItem('token', data.token)
+        router.replace({
+            name: 'home',
+        })
+        userStore.$patch({
+            userInfo: data.user
+        })
     }).finally(loadingRef.value = false)
 }
 
