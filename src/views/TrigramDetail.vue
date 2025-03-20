@@ -5,6 +5,7 @@ import { getEightTrigramInfo } from '@/api/eightTirgram'
 import lunisolar from 'lunisolar'
 import { trigram_r } from '@/static/trigram.js'
 import { getTrigramInfo } from '@/api/trigram'
+import { calcCFigure, calcGFigure, getTrigramFromCFigure, getTrigramFromGFigure, getWuxingFromCFigure, getWuxingFromGFigure } from 'plum-cg'
 
 // lunisolar.extend(theGods)
 const props = defineProps({
@@ -13,13 +14,17 @@ const props = defineProps({
 })
 const emit = defineEmits(['handleClose'])
 
-console.log(lunisolar().char8.year);
 
 const eightTrigramArr = ref([])
 const currentEightTrigram = ref([])
 const trigramInfo = ref(null)
 const currentActiveTrigram = ref('zhu')
-
+const origin_trigram_c_figure = ref('')
+const origin_trigram_g_figure = ref('')
+const origin_trigram_c_figure_trigram = ref('')
+const origin_trigram_g_figure_trigram = ref('')
+const origin_trigram_c_figure_trigram_wuxing = ref('')
+const origin_trigram_g_figure_trigram_wuxing = ref('')
 console.log(props.formData);
 
 const gz_timeArr = computed(() => {
@@ -34,6 +39,22 @@ const singleTrigramArr = computed(() => {
     (isPure(final_trigram) ? final_trigram.slice(-1).repeat(2) : final_trigram.slice(0, 2))
   ).split('')
   // return (props.formData.origin_trigram.slice(0, 2) + props.formData.mid_trigram.slice(0, 2) + props.formData.final_trigram.slice(0, 2)).split('')
+})
+watch(() => currentEightTrigram, () => {
+  const [shangguaName, xiaguaName] = singleTrigramArr.value
+  const shangguaPrenum = currentEightTrigram.value.find(i => i.zh_name === shangguaName)?.pre_num
+  const xiaguaPrenum = currentEightTrigram.value.find(i => i.zh_name === xiaguaName)?.pre_num
+  if (shangguaPrenum && xiaguaPrenum) {
+    const origin_trigram_str = `${shangguaPrenum}${xiaguaPrenum}${props.formData.shift_yao}`
+    origin_trigram_c_figure.value = calcCFigure(origin_trigram_str)
+    origin_trigram_g_figure.value = calcGFigure(origin_trigram_str)
+    origin_trigram_c_figure_trigram.value = getTrigramFromCFigure(origin_trigram_c_figure.value)
+    origin_trigram_g_figure_trigram.value = getTrigramFromGFigure(origin_trigram_g_figure.value)
+    origin_trigram_c_figure_trigram_wuxing.value = getWuxingFromCFigure(origin_trigram_c_figure.value)
+    origin_trigram_g_figure_trigram_wuxing.value = getWuxingFromGFigure(origin_trigram_g_figure.value)
+  }
+}, {
+  deep: true
 })
 const yao_str = computed(() => (index, yIndex) => {
   return +(currentEightTrigram.value[index]?.yao_yy[yIndex]) ? '▀▀▀' : '▀\u00a0\u00a0\u00a0▀'
@@ -114,14 +135,24 @@ onMounted(() => {
             :key="i + index">{{ i }}</td>
         </tr>
         <tr>
+          <th scope="row">策轨</th>
+          <td colspan="2">策数：{{ origin_trigram_c_figure }}</td>
+          <td colspan="2">轨数：{{ origin_trigram_g_figure }}</td>
+        </tr>
+        <tr>
+          <th scope="row">配卦</th>
+          <td colspan="2">{{ origin_trigram_c_figure_trigram.toString() }}</td>
+          <td colspan="2">{{ origin_trigram_g_figure_trigram.toString() }}</td>
+        </tr>
+        <tr>
+          <th scope="row">五行</th>
+          <td colspan="2">{{ origin_trigram_c_figure_trigram_wuxing.toString() }}</td>
+          <td colspan="2">{{ origin_trigram_g_figure_trigram_wuxing.toString() }}</td>
+        </tr>
+        <tr>
           <th scope="row">结果</th>
           <td colspan="4">{{ props.formData.result || '-' }}</td>
         </tr>
-        <!-- <tr>
-          <th scope="row">策轨</th>
-          <td colspan="2">策数：6 7 3 8</td>
-          <td colspan="2">轨数：6 9 9 5 3</td>
-        </tr> -->
         <!-- <tr>
           <th scope="row">神煞</th>
           <td colspan="4">HTML tables</td>
@@ -134,7 +165,7 @@ onMounted(() => {
               <div class="zhugua" @click="currentActiveTrigram = 'zhu'">
                 <p :class="{ shiftYaoCi: currentActiveTrigram === 'zhu' }">【主卦】</p>
                 <p>{{ props.formData.origin_trigram }}</p>
-                <div v-for="(item, i) in 6" :class="{ shiftYao: props.formData.shift_yao === 6 - (+i) }"
+                <div v-for="(item, i) in 6" v-bind:key="i" :class="{ shiftYao: props.formData.shift_yao === 6 - (+i) }"
                   v-html="yao_str(~~(i / 3), i % 3)"></div>
                 <p>{{ trigramInfo?.zhu.trigram_home }}宫</p>
                 <!-- <div v-for="(item, i) in 3">{{ currentEightTrigram[1].yao_yy[i] ? '▀▀▀▀▀' : '▀▀&nbsp;&nbsp;&nbsp;▀▀'}}</div> -->
