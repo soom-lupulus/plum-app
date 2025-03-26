@@ -50,12 +50,12 @@ watch(() => currentEightTrigram, () => {
     origin_trigram_g_figure.value = calcGFigure(origin_trigram_str)
     origin_trigram_c_figure_trigram.value = getTrigramFromCFigure(origin_trigram_c_figure.value)
     origin_trigram_g_figure_trigram.value = getTrigramFromGFigure(origin_trigram_g_figure.value)
-    !origin_trigram_c_figure_trigram.value[4] && origin_trigram_c_figure_trigram.value.unshift('-')
-    !origin_trigram_g_figure_trigram.value[4] && origin_trigram_g_figure_trigram.value.unshift('-')
+    origin_trigram_c_figure_trigram.value.length !== 5 && origin_trigram_c_figure_trigram.value.unshift('')
+    origin_trigram_g_figure_trigram.value.length !== 5 && origin_trigram_g_figure_trigram.value.unshift('')
     origin_trigram_c_figure_trigram_wuxing.value = getWuxingFromCFigure(origin_trigram_c_figure.value)
     origin_trigram_g_figure_trigram_wuxing.value = getWuxingFromGFigure(origin_trigram_g_figure.value)
-    !origin_trigram_c_figure_trigram_wuxing.value[4] && origin_trigram_c_figure_trigram_wuxing.value.unshift('-')
-    !origin_trigram_g_figure_trigram_wuxing.value[4] && origin_trigram_g_figure_trigram_wuxing.value.unshift('-')
+    origin_trigram_c_figure_trigram_wuxing.value.length !== 5 && origin_trigram_c_figure_trigram_wuxing.value.unshift('')
+    origin_trigram_g_figure_trigram_wuxing.value.length !== 5 && origin_trigram_g_figure_trigram_wuxing.value.unshift('')
   }
   console.log(origin_trigram_c_figure_trigram_wuxing.value);
 }, {
