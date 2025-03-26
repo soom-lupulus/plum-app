@@ -21,10 +21,10 @@ const trigramInfo = ref(null)
 const currentActiveTrigram = ref('zhu')
 const origin_trigram_c_figure = ref('')
 const origin_trigram_g_figure = ref('')
-const origin_trigram_c_figure_trigram = ref('')
-const origin_trigram_g_figure_trigram = ref('')
-const origin_trigram_c_figure_trigram_wuxing = ref('')
-const origin_trigram_g_figure_trigram_wuxing = ref('')
+const origin_trigram_c_figure_trigram = ref([])
+const origin_trigram_g_figure_trigram = ref([])
+const origin_trigram_c_figure_trigram_wuxing = ref([])
+const origin_trigram_g_figure_trigram_wuxing = ref([])
 console.log(props.formData);
 
 const gz_timeArr = computed(() => {
@@ -50,9 +50,14 @@ watch(() => currentEightTrigram, () => {
     origin_trigram_g_figure.value = calcGFigure(origin_trigram_str)
     origin_trigram_c_figure_trigram.value = getTrigramFromCFigure(origin_trigram_c_figure.value)
     origin_trigram_g_figure_trigram.value = getTrigramFromGFigure(origin_trigram_g_figure.value)
+    !origin_trigram_c_figure_trigram.value[4] && origin_trigram_c_figure_trigram.value.unshift('-')
+    !origin_trigram_g_figure_trigram.value[4] && origin_trigram_g_figure_trigram.value.unshift('-')
     origin_trigram_c_figure_trigram_wuxing.value = getWuxingFromCFigure(origin_trigram_c_figure.value)
     origin_trigram_g_figure_trigram_wuxing.value = getWuxingFromGFigure(origin_trigram_g_figure.value)
+    !origin_trigram_c_figure_trigram_wuxing.value[4] && origin_trigram_c_figure_trigram_wuxing.value.unshift('-')
+    !origin_trigram_g_figure_trigram_wuxing.value[4] && origin_trigram_g_figure_trigram_wuxing.value.unshift('-')
   }
+  console.log(origin_trigram_c_figure_trigram_wuxing.value);
 }, {
   deep: true
 })
@@ -69,7 +74,6 @@ const guashi = computed(() => num => {
 const trigram_wuxing = computed(() => trigram_name => eightTrigramArr.value.find(i => i.trigram_name === trigram_name)?.wuxing)
 
 const wuxingColor = wuxing => {
-  console.log(wuxing);
   const maps = {
     金: 'jin',
     木: 'mu',
@@ -102,137 +106,143 @@ onMounted(() => {
 </script>
 
 <template>
-  <n-card closable @close="emit('handleClose')" style="width: 600px" :bordered="false" size="huge" role="dialog"
-    aria-modal="true">
-    <table class="d-table" style="width: 100%; border-collapse: collapse;">
-      <!-- 总列数 = 标题1列 + 数据10列 = 11列 -->
-      <colgroup>
-        <col style="width: 1%;"> <!-- 标题列固定最小宽度 -->
-        <col> <!-- 数据区自适应 -->
-      </colgroup>
-      <tbody>
-        <tr>
-          <th>事项</th>
-          <td colspan="20">{{ props.formData.problem }}</td>
-        </tr>
-        <tr>
-          <th>日期</th>
-          <td colspan="20">{{ props.formData.d_time }}</td>
-        </tr>
-        <tr>
-          <th>时间</th>
-          <td colspan="20">{{ props.formData.c_time || '-' }}</td>
-        </tr>
-        <tr>
-          <th>卦式</th>
-          <td colspan="20">{{ guashi(props.formData.category) }}</td>
-        </tr>
-        <tr>
-          <th>节气</th>
-          <td colspan="20">{{ props.formData.solarTerm || '-' }}</td>
-        </tr>
-        <tr>
-          <th>干支</th>
-          <td colspan="5" v-for="(i, index) in gz_timeArr" :key="i + index"
-            style="font-weight: bold;text-align: center;" :style="(index === 2 || index === 1) && { color: '#8B0000' }">
-            {{ i + TIME_ARR[index] }}</td>
-        </tr>
-        <tr>
-          <th>空亡</th>
-          <td colspan="5" style="text-align: center;"
-            v-for="(i, index) in (props.formData.missing || '- - - -').split(' ')" :key="i + index">{{ i }}</td>
-        </tr>
-        <tr>
-          <th rowspan="4">策轨</th>
-          <td colspan="10" style="text-align: center;">策数</td>
-          <td colspan="10" style="text-align: center;">轨数</td>
-        </tr>
-        <tr>
-          <td colspan="2" :key="i + index" v-for="(i, index) in origin_trigram_c_figure.toString().padStart(5, ' ')">{{
-            i }}</td>
-          <td colspan="2" :key="i + index" v-for="(i, index) in origin_trigram_g_figure.toString().padStart(5, ' ')">{{
-            i }}</td>
-        </tr>
-        <tr>
-          <td colspan="2" :key="i + index" v-for="(i, index) in origin_trigram_c_figure_trigram"
-            :class="wuxingColor(trigram_wuxing(i))">{{ i }}</td>
-          <td colspan="2" :key="i + index" v-for="(i, index) in origin_trigram_g_figure_trigram"
-            :class="wuxingColor(trigram_wuxing(i))">{{ i }}</td>
-        </tr>
-        <tr>
-          <td colspan="2" :key="i + index" v-for="(i, index) in origin_trigram_c_figure_trigram_wuxing"
-            :class="wuxingColor(i)">{{ i }}</td>
-          <td colspan="2" :key="i + index" v-for="(i, index) in origin_trigram_g_figure_trigram_wuxing"
-            :class="wuxingColor(i)">{{ i }}</td>
-        </tr>
-        <tr>
-          <th>结果</th>
-          <td colspan="20">{{ props.formData.result || '-' }}</td>
-        </tr>
-        <!-- <tr>
+  <n-card closable @close="emit('handleClose')" :bordered="false" size="huge" role="dialog" aria-modal="true">
+    <div>
+      <table class="d-table" style="width: 100%; border-collapse: collapse;">
+        <!-- 总列数 = 标题1列 + 数据10列 = 11列 -->
+        <colgroup>
+          <col style="width: 1%;"> <!-- 标题列固定最小宽度 -->
+          <col> <!-- 数据区自适应 -->
+        </colgroup>
+        <tbody>
+          <tr>
+            <th>事项</th>
+            <td colspan="20">{{ props.formData.problem }}</td>
+          </tr>
+          <tr>
+            <th>日期</th>
+            <td colspan="20">{{ props.formData.d_time }}</td>
+          </tr>
+          <tr>
+            <th>时间</th>
+            <td colspan="20">{{ props.formData.c_time || '-' }}</td>
+          </tr>
+          <tr>
+            <th>卦式</th>
+            <td colspan="20">{{ guashi(props.formData.category) }}</td>
+          </tr>
+          <tr>
+            <th>节气</th>
+            <td colspan="20">{{ props.formData.solarTerm || '-' }}</td>
+          </tr>
+          <tr>
+            <th>干支</th>
+            <td colspan="5" v-for="(i, index) in gz_timeArr" :key="i + index"
+              style="font-weight: bold;text-align: center;"
+              :style="(index === 2 || index === 1) && { color: '#8B0000' }">
+              {{ i + TIME_ARR[index] }}</td>
+          </tr>
+          <tr>
+            <th>空亡</th>
+            <td colspan="5" style="text-align: center;"
+              v-for="(i, index) in (props.formData.missing || '- - - -').split(' ')" :key="i + index">{{ i }}</td>
+          </tr>
+          <tr>
+            <th rowspan="4">策轨</th>
+            <td colspan="10" style="text-align: center;">策数</td>
+            <td colspan="10" style="text-align: center;">轨数</td>
+          </tr>
+          <tr>
+            <td colspan="2" :key="i + index" v-for="(i, index) in origin_trigram_c_figure.toString().padStart(5, ' ')">
+              {{
+                i }}</td>
+            <td colspan="2" :key="i + index" v-for="(i, index) in origin_trigram_g_figure.toString().padStart(5, ' ')">
+              {{
+                i }}</td>
+          </tr>
+          <tr>
+            <td colspan="2" :key="i + index" v-for="(i, index) in origin_trigram_c_figure_trigram"
+              :class="wuxingColor(trigram_wuxing(i))">{{ i }}</td>
+            <td colspan="2" :key="i + index" v-for="(i, index) in origin_trigram_g_figure_trigram"
+              :class="wuxingColor(trigram_wuxing(i))">{{ i }}</td>
+          </tr>
+          <tr>
+            <td colspan="2" :key="i + index" v-for="(i, index) in origin_trigram_c_figure_trigram_wuxing"
+              :class="wuxingColor(i)">{{ i }}</td>
+            <td colspan="2" :key="i + index" v-for="(i, index) in origin_trigram_g_figure_trigram_wuxing"
+              :class="wuxingColor(i)">{{ i }}</td>
+          </tr>
+          <tr>
+            <th>结果</th>
+            <td colspan="20">{{ props.formData.result || '-' }}</td>
+          </tr>
+          <!-- <tr>
           <th >神煞</th>
           <td colspan="4">HTML tables</td>
         </tr> -->
-      </tbody>
-      <tfoot>
-        <tr>
-          <td colspan="20">
-            <div class="gua_box">
-              <div class="zhugua" @click="currentActiveTrigram = 'zhu'">
-                <p :class="{ shiftYaoCi: currentActiveTrigram === 'zhu' }">【主卦】</p>
-                <p>{{ props.formData.origin_trigram }}</p>
-                <div v-for="(item, i) in 6" v-bind:key="i" :class="{ shiftYao: props.formData.shift_yao === 6 - (+i) }"
-                  v-html="yao_str(~~(i / 3), i % 3)"></div>
-                <p>{{ trigramInfo?.zhu.trigram_home }}宫</p>
-                <!-- <div v-for="(item, i) in 3">{{ currentEightTrigram[1].yao_yy[i] ? '▀▀▀▀▀' : '▀▀&nbsp;&nbsp;&nbsp;▀▀'}}</div> -->
-              </div>
-              <div class="hugua" @click="currentActiveTrigram = 'hu'">
-                <p :class="{ shiftYaoCi: currentActiveTrigram === 'hu' }">【互卦】</p>
-                <p>{{ props.formData.mid_trigram }}</p>
-                <div v-for="(item, i) in 3" :key="i" v-html="yao_str(2, i)"></div>
-                <div v-for="(item, i) in 3" :key="i">{{ yao_str(3, i) }}</div>
-                <p>{{ trigramInfo?.hu.trigram_home }}宫</p>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="20">
+              <div class="gua_box">
+                <div class="zhugua" @click="currentActiveTrigram = 'zhu'">
+                  <p :class="{ shiftYaoCi: currentActiveTrigram === 'zhu' }">【主卦】</p>
+                  <p>{{ props.formData.origin_trigram }}</p>
+                  <div v-for="(item, i) in 6" v-bind:key="i"
+                    :class="{ shiftYao: props.formData.shift_yao === 6 - (+i) }" v-html="yao_str(~~(i / 3), i % 3)">
+                  </div>
+                  <p>{{ trigramInfo?.zhu.trigram_home }}宫</p>
+                  <!-- <div v-for="(item, i) in 3">{{ currentEightTrigram[1].yao_yy[i] ? '▀▀▀▀▀' : '▀▀&nbsp;&nbsp;&nbsp;▀▀'}}</div> -->
+                </div>
+                <div class="hugua" @click="currentActiveTrigram = 'hu'">
+                  <p :class="{ shiftYaoCi: currentActiveTrigram === 'hu' }">【互卦】</p>
+                  <p>{{ props.formData.mid_trigram }}</p>
+                  <div v-for="(item, i) in 3" :key="i" v-html="yao_str(2, i)"></div>
+                  <div v-for="(item, i) in 3" :key="i">{{ yao_str(3, i) }}</div>
+                  <p>{{ trigramInfo?.hu.trigram_home }}宫</p>
 
-              </div>
-              <div class="biangua" @click="currentActiveTrigram = 'bian'">
-                <p :class="{ shiftYaoCi: currentActiveTrigram === 'bian' }">【变卦】
-                </p>
-                <p>{{ props.formData.final_trigram }}</p>
-                <div v-for="(item, i) in 3" :key="i" v-html="yao_str(4, i)"></div>
-                <div v-for="(item, i) in 3" :key="i">{{ yao_str(5, i) }}</div>
-                <p>{{ trigramInfo?.bian.trigram_home }}宫</p>
+                </div>
+                <div class="biangua" @click="currentActiveTrigram = 'bian'">
+                  <p :class="{ shiftYaoCi: currentActiveTrigram === 'bian' }">【变卦】
+                  </p>
+                  <p>{{ props.formData.final_trigram }}</p>
+                  <div v-for="(item, i) in 3" :key="i" v-html="yao_str(4, i)"></div>
+                  <div v-for="(item, i) in 3" :key="i">{{ yao_str(5, i) }}</div>
+                  <p>{{ trigramInfo?.bian.trigram_home }}宫</p>
 
+                </div>
               </div>
-            </div>
-            <!-- <div>五行旺衰</div> -->
-            <div class="wangshuaiWrapper">
-              <div>
-                <div :class="wuxingColor(currentEightTrigram[0]?.wuxing)">{{ currentEightTrigram[0]?.wuxing }}</div>
-                <div :class="wuxingColor(currentEightTrigram[1]?.wuxing)">{{ currentEightTrigram[1]?.wuxing }}</div>
+              <!-- <div>五行旺衰</div> -->
+              <div class="wangshuaiWrapper">
+                <div>
+                  <div :class="wuxingColor(currentEightTrigram[0]?.wuxing)">{{ currentEightTrigram[0]?.wuxing }}</div>
+                  <div :class="wuxingColor(currentEightTrigram[1]?.wuxing)">{{ currentEightTrigram[1]?.wuxing }}</div>
+                </div>
+                <div>
+                  <div :class="wuxingColor(currentEightTrigram[2]?.wuxing)">{{ currentEightTrigram[2]?.wuxing }}</div>
+                  <div :class="wuxingColor(currentEightTrigram[3]?.wuxing)">{{ currentEightTrigram[3]?.wuxing }}</div>
+                </div>
+                <div>
+                  <div :class="wuxingColor(currentEightTrigram[4]?.wuxing)">{{ currentEightTrigram[4]?.wuxing }}</div>
+                  <div :class="wuxingColor(currentEightTrigram[5]?.wuxing)">{{ currentEightTrigram[5]?.wuxing }}</div>
+                </div>
               </div>
-              <div>
-                <div :class="wuxingColor(currentEightTrigram[2]?.wuxing)">{{ currentEightTrigram[2]?.wuxing }}</div>
-                <div :class="wuxingColor(currentEightTrigram[3]?.wuxing)">{{ currentEightTrigram[3]?.wuxing }}</div>
+              <!-- <p>爻辞</p> -->
+              <div class="word_box">
+                <article>
+                  {{ trigramInfo?.[currentActiveTrigram].trigram_content }}
+                </article>
+                <article>
+                  <p v-for="i in 6" :key="i" :class="{ shiftYaoCi: props.formData.shift_yao === i }">{{
+                    trigramInfo?.[currentActiveTrigram][`yao_content_${i}`] }}</p>
+                </article>
               </div>
-              <div>
-                <div :class="wuxingColor(currentEightTrigram[4]?.wuxing)">{{ currentEightTrigram[4]?.wuxing }}</div>
-                <div :class="wuxingColor(currentEightTrigram[5]?.wuxing)">{{ currentEightTrigram[5]?.wuxing }}</div>
-              </div>
-            </div>
-            <!-- <p>爻辞</p> -->
-            <div class="word_box">
-              <article>
-                {{ trigramInfo?.[currentActiveTrigram].trigram_content }}
-              </article>
-              <article>
-                <p v-for="i in 6" :key="i" :class="{ shiftYaoCi: props.formData.shift_yao === i }">{{
-                  trigramInfo?.[currentActiveTrigram][`yao_content_${i}`] }}</p>
-              </article>
-            </div>
-          </td>
-        </tr>
-      </tfoot>
-    </table>
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
   </n-card>
 </template>
 
@@ -290,27 +300,16 @@ onMounted(() => {
   letter-spacing: 1px;
 }
 
-
-caption {
-  caption-side: bottom;
-  padding: 10px;
-  font-weight: bold;
-}
-
-thead,
-tfoot {
-  // background-color: rgb(228 240 245);
-}
-
 th {
   color: #4f795f;
-  min-width: 50px;
+  white-space: nowrap;
 }
 
 th,
 td {
   border: 1px solid rgb(160 160 160);
-  padding: 8px 10px;
+  padding: 0.5rem 0.5rem;
+  text-align: center;
 }
 
 td:last-of-type {
@@ -332,7 +331,7 @@ tfoot td {
 .wangshuaiWrapper {
   display: flex;
   justify-content: space-evenly;
-  font-size: 24px;
+  font-size: 1.5rem;
 
   div {
     font-weight: bold;
@@ -357,6 +356,55 @@ tfoot td {
     >p {
       padding: 2px 0;
     }
+  }
+}
+
+
+@media screen and (320px <=width < 375px) {
+
+  .d-table {
+    font-size: 0.6rem;
+  }
+
+  .wangshuaiWrapper {
+    font-size: 1rem;
+  }
+
+  th,
+  td {
+    padding: 0.3rem 0.4rem;
+  }
+}
+
+@media screen and (375px <=width < 425px) {
+
+  .d-table {
+    font-size: 0.8rem;
+  }
+
+  .wangshuaiWrapper {
+    font-size: 1.5rem;
+  }
+
+  th,
+  td {
+    padding: 0.4rem 0.4rem;
+  }
+}
+
+@media screen and (425px <=width < 1024px) {
+
+  .d-table {
+    font-size: 1rem;
+  }
+
+  .wangshuaiWrapper {
+    font-size: 1.8rem;
+  }
+
+  th,
+  td {
+    padding: 0.5rem 0.5rem;
   }
 }
 </style>
