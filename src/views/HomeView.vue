@@ -299,7 +299,7 @@ watch(
 
 <template>
   <main>
-    <n-space>
+    <n-space :wrap="false">
       <n-button @click="addCase" class="addBtn" type="primary">新增案例</n-button>
       <n-input v-model:value="searchProblem" :clearable="true" type="text" placeholder="请输入搜索的卦题" />
       <div>
@@ -310,7 +310,6 @@ watch(
           确定要退出吗？
         </n-popconfirm>
       </div>
-
     </n-space>
     <n-modal v-model:show="showModal" :on-after-leave="handleClose">
       <trigram-detail v-if="modalMode === 'info'" :modalMode="modalMode" :formData="formData"
