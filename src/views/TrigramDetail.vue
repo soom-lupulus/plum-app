@@ -65,6 +65,34 @@ const yao_str = computed(() => (index, yIndex) => {
   return +(currentEightTrigram.value[index]?.yao_yy[yIndex]) ? '▀▀▀' : '▀\u00a0\u00a0\u00a0▀'
 })
 
+const calc_nj = computed(() => (gua, yao, iszhugua = true) => {
+  let str = ''
+  if (yao > 5 || yao < 0) throw '爻位错误'
+
+  if (yao > 2) {
+    if (iszhugua) {
+      str = gua[0]?.outer_nj.split('')[yao - 3]
+    } else {
+      str = gua[4]?.outer_nj.split('')[yao - 3]
+    }
+  }
+  else {
+    if (iszhugua) {
+      str = gua[1]?.inner_nj.split('')[yao]
+
+    } else {
+      str = gua[5]?.inner_nj.split('')[yao]
+    }
+  }
+
+
+
+  console.log(yao);
+  console.log(str);
+
+  return str
+})
+
 const guashi = computed(() => num => {
   if (num === 0) return '先天卦'
   if (num === 1) return '后天卦'
@@ -189,7 +217,9 @@ onMounted(() => {
                   <p :class="{ shiftYaoCi: currentActiveTrigram === 'zhu' }">【主卦】</p>
                   <p>{{ props.formData.origin_trigram }}</p>
                   <div v-for="(item, i) in 6" v-bind:key="i"
-                    :class="{ shiftYao: props.formData.shift_yao === 6 - (+i) }" v-html="yao_str(~~(i / 3), i % 3)">
+                    :class="{ shiftYao: props.formData.shift_yao === 6 - (+i) }">
+                    <span>{{ calc_nj(currentEightTrigram, 6 - item) }}</span>
+                    <span class="yao_item">{{ yao_str(~~(i / 3), i % 3) }}</span>
                   </div>
                   <p>{{ trigramInfo?.zhu.trigram_home }}宫</p>
                   <!-- <div v-for="(item, i) in 3">{{ currentEightTrigram[1].yao_yy[i] ? '▀▀▀▀▀' : '▀▀&nbsp;&nbsp;&nbsp;▀▀'}}</div> -->
@@ -197,8 +227,12 @@ onMounted(() => {
                 <div class="hugua" @click="currentActiveTrigram = 'hu'">
                   <p :class="{ shiftYaoCi: currentActiveTrigram === 'hu' }">【互卦】</p>
                   <p>{{ props.formData.mid_trigram }}</p>
-                  <div v-for="(item, i) in 3" :key="i" v-html="yao_str(2, i)"></div>
-                  <div v-for="(item, i) in 3" :key="i">{{ yao_str(3, i) }}</div>
+                  <div v-for="(item, i) in 3" :key="i">
+                    <span class="yao_item">{{ yao_str(2, i) }}</span>
+                  </div>
+                  <div v-for="(item, i) in 3" :key="i">
+                    <span class="yao_item">{{ yao_str(3, i) }}</span>
+                  </div>
                   <p>{{ trigramInfo?.hu.trigram_home }}宫</p>
 
                 </div>
@@ -206,8 +240,14 @@ onMounted(() => {
                   <p :class="{ shiftYaoCi: currentActiveTrigram === 'bian' }">【变卦】
                   </p>
                   <p>{{ props.formData.final_trigram }}</p>
-                  <div v-for="(item, i) in 3" :key="i" v-html="yao_str(4, i)"></div>
-                  <div v-for="(item, i) in 3" :key="i">{{ yao_str(5, i) }}</div>
+                  <div v-for="(item, i) in 3" :key="i">
+                    <span>{{ calc_nj(currentEightTrigram, 6 - item, false) }}</span>
+                    <span class="yao_item">{{ yao_str(4, i) }}</span>
+                  </div>
+                  <div v-for="(item, i) in 3" :key="i">
+                    <span>{{ calc_nj(currentEightTrigram, 3 - item, false) }}</span>
+                    <span class="yao_item">{{ yao_str(5, i) }}</span>
+                  </div>
                   <p>{{ trigramInfo?.bian.trigram_home }}宫</p>
 
                 </div>
@@ -233,8 +273,17 @@ onMounted(() => {
                   {{ trigramInfo?.[currentActiveTrigram].trigram_content }}
                 </article>
                 <article>
-                  <p v-for="i in 6" :key="i" :class="{ shiftYaoCi: props.formData.shift_yao === i }">{{
-                    trigramInfo?.[currentActiveTrigram][`yao_content_${i}`] }}</p>
+
+                  <p v-for="i in 6" :key="i" :class="{ shiftYaoCi: props.formData.shift_yao === i }">
+                    <n-popover trigger="click" :width="250">
+                      <template #trigger>
+                        <span>{{
+                          trigramInfo?.[currentActiveTrigram][`yao_content_${i}`] }}</span>
+                      </template>
+                      <span>{{
+                        trigramInfo?.[currentActiveTrigram][`yao_content_baihua_${i}`] }}</span>
+                    </n-popover>
+                  </p>
                 </article>
               </div>
             </td>
@@ -357,6 +406,11 @@ tfoot td {
       padding: 2px 0;
     }
   }
+}
+
+.yao_item {
+  vertical-align: sub;
+  margin-left: 3px;
 }
 
 
