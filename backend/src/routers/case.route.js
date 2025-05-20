@@ -1,12 +1,3 @@
-/*
- * @Author: yuyunhao
- * @Date: 2021-11-18 19:52:30
- * @LastEditTime: 2021-12-11 02:25:04
- * @LastEditors: yuyunhao
- * @Description:
- * @FilePath: \koaserver\src\routers\life\life.route.js
- * 代码都是复制过来的，怎么会出错
- */
 const Router = require("koa-router");
 const koaBody = require("koa-body");
 const {

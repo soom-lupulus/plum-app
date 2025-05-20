@@ -1,12 +1,3 @@
-/*
- * @Author: yuyunhao
- * @Date: 2021-11-18 19:44:47
- * @LastEditTime: 2021-12-11 12:10:12
- * @LastEditors: yuyunhao
- * @Description:
- * @FilePath: \koaserver\src\controllers\life\photo\life.photo.controller.js
- * 代码都是复制过来的，怎么会出错
- */
 const {
   insertCase,
   queryCaseList,

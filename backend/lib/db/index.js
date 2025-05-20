@@ -1,12 +1,3 @@
-/*
- * @Author: yuyunhao
- * @Date: 2021-12-10 19:32:29
- * @LastEditTime: 2021-12-11 01:09:02
- * @LastEditors: yuyunhao
- * @Description: 连接数据库
- * @FilePath: \koaserver\lib\db\index.js
- * 代码都是复制过来的，怎么会出错
- */
 const { Sequelize } = require('sequelize');
 const { DB_NAME, DB_HOST, DB_USER, DB_PASSWORD } = require('../../config/default.config')
 
