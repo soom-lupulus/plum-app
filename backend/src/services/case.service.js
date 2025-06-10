@@ -16,7 +16,8 @@ class CaseService {
                     [Op.like]: `%${problem}%`
                 },
                 user_id
-            }
+            },
+            order: [['createdAt', 'DESC']]
         })
         
     }

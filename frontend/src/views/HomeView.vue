@@ -7,7 +7,7 @@ import { isMobile } from '@/utils'
 import { debounce } from 'lodash'
 import { CheckCircleRegular, TimesCircleRegular, QuestionCircleRegular } from '@vicons/fa'
 import AmendContent from './AmendContent.vue'
-import TrigramDetail from './TrigramDetail.vue'
+import TrigramDetail from '@/components/page/TrigramDetail/TrigramDetail.vue'
 import { useUserStore } from '@/stores'
 import router from '@/router'
 
