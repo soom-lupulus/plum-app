@@ -202,6 +202,13 @@ tfoot td {
     margin-left: 3px;
 }
 
+th,
+td {
+    border: 1px solid rgb(160 160 160);
+    padding: 0.5rem 0.5rem;
+    text-align: center;
+}
+
 @media screen and (320px <=width < 375px) {
     .wangshuaiWrapper {
         font-size: 1rem;
