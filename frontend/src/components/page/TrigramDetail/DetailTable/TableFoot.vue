@@ -1,12 +1,14 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { wuxingColor } from '@/utils'
+import { ZHI, SHISHEN_LIUYAO } from '@/utils/const'
 
 const props = defineProps({
     modalMode: String,
     formData: Object,
-    currentEightTrigram: Object,
-    trigramInfo: Object
+    currentEightTrigram: Array,
+    trigramInfo: Object,
+    eightTrigramArr: Array
 })
 
 const currentActiveTrigram = ref('zhu')
@@ -18,6 +20,14 @@ const yao_str = computed(() => (index, yIndex) => {
  * 六爻纳甲计算
  */
 const calc_nj = computed(() => (gua, yao, iszhugua = true) => {
+    if (!props.trigramInfo) return [];
+    console.log(props.trigramInfo.zhu.trigram_home);
+    // 拿到卦宫五行
+
+    console.log(props.trigramInfo);
+
+    const gong_wuxing = props.eightTrigramArr.find(i => i.trigram_name === props.trigramInfo.zhu.trigram_home)?.wuxing
+
     let str = ''
     if (yao > 5 || yao < 0) throw '爻位错误'
     if (yao > 2) {
@@ -35,8 +45,22 @@ const calc_nj = computed(() => (gua, yao, iszhugua = true) => {
             str = gua[5]?.inner_nj.split('')[yao]
         }
     }
-    return str
+    const zhi_wuxing = ZHI[str].wuxing
+    const shishen = SHISHEN_LIUYAO[gong_wuxing][ZHI[str].wuxing]
+    return [str, zhi_wuxing, shishen]
 })
+
+// 世爻
+const yao_shi = computed(() => {
+    return props.trigramInfo?.zhu.yao_shi
+})
+
+// 应爻
+const yao_ying = computed(() => {
+    if (props.trigramInfo) return (props.trigramInfo.zhu.yao_shi + 3) % 6
+    return -1
+})
+
 </script>
 
 <template>
@@ -48,8 +72,10 @@ const calc_nj = computed(() => (gua, yao, iszhugua = true) => {
                         <p :class="{ shiftYaoCi: currentActiveTrigram === 'zhu' }">【主卦】</p>
                         <p>{{ props.formData.origin_trigram }}</p>
                         <div v-for="(item, i) in 6" v-bind:key="i"
-                            :class="{ shiftYao: props.formData.shift_yao === 6 - (+i) }">
-                            <span>{{ calc_nj(currentEightTrigram, 6 - item) }}</span>
+                            :class="{ shiftYao: props.formData.shift_yao === 6 - (+i), shiYao: yao_shi === 6 - Number(i), yingYao: yao_ying === 6 - Number(i) }">
+                            <span class="small_size">{{ calc_nj(currentEightTrigram, 6 - item)[2] }}</span>
+                            <span class="small_size">{{ calc_nj(currentEightTrigram, 6 - item)[0] }}</span>
+                            <span class="small_size">{{ calc_nj(currentEightTrigram, 6 - item)[1] }}</span>
                             <span class="yao_item">{{ yao_str(~~(i / 3), i % 3) }}</span>
                         </div>
                         <p>{{ trigramInfo?.zhu.trigram_home }}宫</p>
@@ -72,11 +98,15 @@ const calc_nj = computed(() => (gua, yao, iszhugua = true) => {
                         </p>
                         <p>{{ props.formData.final_trigram }}</p>
                         <div v-for="(item, i) in 3" :key="i">
-                            <span>{{ calc_nj(currentEightTrigram, 6 - item, false) }}</span>
+                            <span class="small_size">{{ calc_nj(currentEightTrigram, 6 - item)[2] }}</span>
+                            <span class="small_size">{{ calc_nj(currentEightTrigram, 6 - item, false)[0] }}</span>
+                            <span class="small_size">{{ calc_nj(currentEightTrigram, 6 - item, false)[1] }}</span>
                             <span class="yao_item">{{ yao_str(4, i) }}</span>
                         </div>
                         <div v-for="(item, i) in 3" :key="i">
-                            <span>{{ calc_nj(currentEightTrigram, 3 - item, false) }}</span>
+                            <span class="small_size">{{ calc_nj(currentEightTrigram, 6 - item)[2] }}</span>
+                            <span class="small_size">{{ calc_nj(currentEightTrigram, 3 - item, false)[0] }}</span>
+                            <span class="small_size">{{ calc_nj(currentEightTrigram, 3 - item, false)[1] }}</span>
                             <span class="yao_item">{{ yao_str(5, i) }}</span>
                         </div>
                         <p>{{ trigramInfo?.bian.trigram_home }}宫</p>
@@ -148,8 +178,38 @@ const calc_nj = computed(() => (gua, yao, iszhugua = true) => {
         background-color: rgb(52, 135, 243);
         position: absolute;
         left: -20px;
-        top: 4px;
+        top: 10px;
     }
+}
+
+.shiYao {
+    position: relative;
+
+    &::after {
+        content: '世';
+        display: inline-block;
+        position: absolute;
+        right: -20px;
+        top: 4px;
+        font-size: 0.7rem;
+    }
+}
+
+.yingYao {
+    position: relative;
+
+    &::after {
+        content: '应';
+        display: inline-block;
+        position: absolute;
+        right: -20px;
+        top: 4px;
+        font-size: 0.7rem;
+    }
+}
+
+.small_size {
+    font-size: 0.7rem;
 }
 
 .shiftYaoCi {

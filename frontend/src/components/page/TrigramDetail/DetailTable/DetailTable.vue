@@ -56,7 +56,8 @@ onMounted(() => {
         </colgroup>
         <TableBody :eightTrigramArr="eightTrigramArr" :currentEightTrigram="currentEightTrigram"
             :singleTrigramArr="singleTrigramArr" v-bind="props" />
-        <TableFoot :trigramInfo="trigramInfo" :currentEightTrigram="currentEightTrigram" v-bind="props" />
+        <TableFoot :trigramInfo="trigramInfo" :currentEightTrigram="currentEightTrigram"
+            :eightTrigramArr="eightTrigramArr" v-bind="props" />
     </table>
 </template>
 

@@ -86,4 +86,10 @@ module.exports = {
     yao_content_baihua_6: {
         type: DataTypes.STRING,
     },
+    yao_shi: {
+        type: DataTypes.INTEGER,
+    },
+    yao_ying: {
+        type: DataTypes.INTEGER,
+    },
 }
