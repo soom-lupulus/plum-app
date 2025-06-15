@@ -21,11 +21,7 @@ const yao_str = computed(() => (index, yIndex) => {
  */
 const calc_nj = computed(() => (gua, yao, iszhugua = true) => {
     if (!props.trigramInfo) return [];
-    console.log(props.trigramInfo.zhu.trigram_home);
     // 拿到卦宫五行
-
-    console.log(props.trigramInfo);
-
     const gong_wuxing = props.eightTrigramArr.find(i => i.trigram_name === props.trigramInfo.zhu.trigram_home)?.wuxing
 
     let str = ''
@@ -98,13 +94,13 @@ const yao_ying = computed(() => {
                         </p>
                         <p>{{ props.formData.final_trigram }}</p>
                         <div v-for="(item, i) in 3" :key="i">
-                            <span class="small_size">{{ calc_nj(currentEightTrigram, 6 - item)[2] }}</span>
+                            <span class="small_size">{{ calc_nj(currentEightTrigram, 6 - item, false)[2] }}</span>
                             <span class="small_size">{{ calc_nj(currentEightTrigram, 6 - item, false)[0] }}</span>
                             <span class="small_size">{{ calc_nj(currentEightTrigram, 6 - item, false)[1] }}</span>
                             <span class="yao_item">{{ yao_str(4, i) }}</span>
                         </div>
                         <div v-for="(item, i) in 3" :key="i">
-                            <span class="small_size">{{ calc_nj(currentEightTrigram, 6 - item)[2] }}</span>
+                            <span class="small_size">{{ calc_nj(currentEightTrigram, 3 - item, false)[2] }}</span>
                             <span class="small_size">{{ calc_nj(currentEightTrigram, 3 - item, false)[0] }}</span>
                             <span class="small_size">{{ calc_nj(currentEightTrigram, 3 - item, false)[1] }}</span>
                             <span class="yao_item">{{ yao_str(5, i) }}</span>
@@ -178,7 +174,7 @@ const yao_ying = computed(() => {
         background-color: rgb(52, 135, 243);
         position: absolute;
         left: -20px;
-        top: 10px;
+        top: 0.35rem;
     }
 }
 
@@ -189,8 +185,8 @@ const yao_ying = computed(() => {
         content: '世';
         display: inline-block;
         position: absolute;
-        right: -20px;
-        top: 4px;
+        right: -1rem;
+        top: 0.1rem;
         font-size: 0.7rem;
     }
 }
@@ -202,8 +198,8 @@ const yao_ying = computed(() => {
         content: '应';
         display: inline-block;
         position: absolute;
-        right: -20px;
-        top: 4px;
+        right: -1rem;
+        top: 0.1rem;
         font-size: 0.7rem;
     }
 }
@@ -284,6 +280,20 @@ td {
 @media screen and (425px <=width < 768px) {
     .wangshuaiWrapper {
         font-size: 1.5rem;
+    }
+    .shiftYao::before{
+        top: 0.6rem;
+    }
+    .small_size{
+        font-size: 0.8rem;
+    }
+    .shiYao::after{
+        top: 0.2rem;
+        font-size: 0.8rem;
+    }
+    .yingYao::after{
+        top: 0.2rem;
+        font-size: 0.8rem;
     }
 }
 
