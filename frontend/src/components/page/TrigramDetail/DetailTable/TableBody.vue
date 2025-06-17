@@ -2,6 +2,7 @@
 import { ref, computed, watch } from 'vue'
 import { calcCFigure, calcGFigure, getTrigramFromCFigure, getTrigramFromGFigure, getWuxingFromCFigure, getWuxingFromGFigure } from 'plum-cg'
 import { wuxingColor } from '@/utils'
+import useShensha from '@/hooks/useShensha'
 
 const props = defineProps({
     modalMode: String,
@@ -10,6 +11,11 @@ const props = defineProps({
     eightTrigramArr: Array,
     singleTrigramArr: Array
 })
+
+const shenshaArr = useShensha('甲', '寅')
+
+console.log(shenshaArr);
+console.log(shenshaArr.value.filter(i => i.on));
 
 
 const gz_timeArr = computed(() => {
@@ -120,18 +126,47 @@ const trigram_wuxing = computed(() => trigram_name => props.eightTrigramArr.find
                 :class="wuxingColor(i)">{{ i }}</td>
         </tr>
         <tr>
+            <th>神煞</th>
+            <td colspan="20">
+                <div class="shensha-wrapper">
+                    <n-tag v-for="shensha in shenshaArr.filter(i => i.on)" :type="shensha.good ? 'success' : 'error'"
+                        :key="shensha.name">
+                        <n-popover trigger="click" :width="250">
+                            <template #trigger>
+                                <span>{{ shensha.name }}</span>
+                            </template>
+                            <pre>{{ shensha.desc }}</pre>
+                        </n-popover>
+                    </n-tag>
+
+                </div>
+                <div>
+                    <n-collapse arrow-placement="right">
+                        <n-collapse-item title="查看未匹配" name="1">
+                            <div class="shensha-wrapper">
+                                <n-tag v-for="shensha in shenshaArr.filter(i => !i.on)"
+                                    :type="shensha.good ? 'success' : 'error'" :key="shensha.name">
+                                    <n-popover trigger="click" :width="250">
+                                        <template #trigger>
+                                            <span>{{ shensha.name }}</span>
+                                        </template>
+                                        <pre>{{ shensha.desc }}</pre>
+                                    </n-popover>
+                                </n-tag>
+                            </div>
+                        </n-collapse-item>
+                    </n-collapse>
+                </div>
+            </td>
+        </tr>
+        <tr>
             <th>结果</th>
             <td colspan="20">{{ props.formData.result || '-' }}</td>
         </tr>
-        <!-- <tr>
-          <th >神煞</th>
-          <td colspan="4">HTML tables</td>
-        </tr> -->
     </tbody>
 </template>
 
 <style lang="css" scoped>
-
 th {
     color: #4f795f;
     white-space: nowrap;
@@ -148,7 +183,19 @@ tbody>tr:nth-of-type(even) {
     background-color: rgb(237 238 242);
 }
 
+.shensha-line-through {
+    text-decoration: line-through;
+}
+
+.shensha-wrapper {
+    width: 100%;
+    display: grid;
+    gap: 0.2rem;
+    grid-template-columns: repeat(auto-fill, minmax(4rem, 1fr));
+}
+
 @media screen and (320px <=width < 375px) {
+
     th,
     td {
         padding: 0.3rem 0.4rem;
@@ -156,6 +203,7 @@ tbody>tr:nth-of-type(even) {
 }
 
 @media screen and (375px <=width < 425px) {
+
     th,
     td {
         padding: 0.4rem 0.4rem;
@@ -163,6 +211,7 @@ tbody>tr:nth-of-type(even) {
 }
 
 @media screen and (425px <=width < 768px) {
+
     th,
     td {
         padding: 0.1rem 0.4rem;
@@ -170,6 +219,7 @@ tbody>tr:nth-of-type(even) {
 }
 
 @media screen and (768px <=width) {
+
     th,
     td {
         padding: 0.5rem 1.8rem;

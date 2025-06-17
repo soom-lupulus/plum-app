@@ -16,6 +16,9 @@ const yao_str = computed(() => (index, yIndex) => {
     return +(props.currentEightTrigram[index]?.yao_yy[yIndex]) ? '▀▀▀' : '▀\u00a0\u00a0\u00a0▀'
 })
 
+console.log(props.formData);
+
+
 /**
  * 六爻纳甲计算
  */
@@ -57,6 +60,37 @@ const yao_ying = computed(() => {
     return -1
 })
 
+/**
+ * 六神
+ * 甲乙起青龙，丙丁起朱雀，戊起勾陈，己起螣蛇，庚辛起白虎，壬癸起玄武
+ */
+const six_god = computed(() => (yao_num) => {
+    console.log(yao_num);
+    
+    const ganzhi = props.formData.gz_time
+    const rizhu = ganzhi.split(' ')[2]
+    const rigan = rizhu.charAt(0)
+    console.log(rigan);
+
+    const sg_map = {
+        甲: '青龙',
+        乙: '青龙',
+        丙: '朱雀',
+        丁: '朱雀',
+        戊: '勾陈',
+        己: '螣蛇',
+        庚: '白虎',
+        辛: '白虎',
+        壬: '玄武',
+        癸: '玄武',
+    }
+    const arr = ['青龙', '朱雀', '勾陈', '螣蛇', '白虎', '玄武']
+
+    const index = arr.findIndex(i => i === sg_map[rigan])
+
+    return arr[(index + yao_num) % arr.length]
+})
+
 </script>
 
 <template>
@@ -69,6 +103,7 @@ const yao_ying = computed(() => {
                         <p>{{ props.formData.origin_trigram }}</p>
                         <div v-for="(item, i) in 6" v-bind:key="i"
                             :class="{ shiftYao: props.formData.shift_yao === 6 - (+i), shiYao: yao_shi === 6 - Number(i), yingYao: yao_ying === 6 - Number(i) }">
+                            <span class="small_size">{{ six_god(6 - item) }}</span>
                             <span class="small_size">{{ calc_nj(currentEightTrigram, 6 - item)[2] }}</span>
                             <span class="small_size">{{ calc_nj(currentEightTrigram, 6 - item)[0] }}</span>
                             <span class="small_size">{{ calc_nj(currentEightTrigram, 6 - item)[1] }}</span>
@@ -281,17 +316,21 @@ td {
     .wangshuaiWrapper {
         font-size: 1.5rem;
     }
-    .shiftYao::before{
+
+    .shiftYao::before {
         top: 0.6rem;
     }
-    .small_size{
+
+    .small_size {
         font-size: 0.8rem;
     }
-    .shiYao::after{
+
+    .shiYao::after {
         top: 0.2rem;
         font-size: 0.8rem;
     }
-    .yingYao::after{
+
+    .yingYao::after {
         top: 0.2rem;
         font-size: 0.8rem;
     }
