@@ -34,7 +34,7 @@ const shensha = ref({
 
 watchEffect(() => {
     const gzStr = gz_timeArr.value.join(' ')
-    if(!gzStr) return
+    if (!gzStr) return
     const { niansha, jisha, yuesha, risha } = allshensha(gzStr)
     console.log(shensha);
     shensha.value = {
@@ -188,6 +188,8 @@ tbody>tr:nth-of-type(even) {
 
 .shensha-content {
     vertical-align: top;
+    font-size: 0.7rem;
+    white-space: nowrap;
 }
 
 
@@ -213,6 +215,10 @@ tbody>tr:nth-of-type(even) {
     td {
         padding: 0.1rem 0.4rem;
     }
+
+    .shensha-content {
+        font-size: 1rem;
+    }
 }
 
 @media screen and (768px <=width) {
@@ -220,6 +226,9 @@ tbody>tr:nth-of-type(even) {
     th,
     td {
         padding: 0.5rem 1.8rem;
+    }
+    .shensha-content {
+        font-size: 1.2rem;
     }
 }
 </style>
