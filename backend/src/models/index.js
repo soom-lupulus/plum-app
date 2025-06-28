@@ -15,7 +15,8 @@ const Case = sequelize.define('Case', CaseType, {
 });
 
 const Trigram = sequelize.define('Trigram', TrigramType, {
-    tableName: 'trigram'
+    tableName: 'trigram',
+    timestamps: false
 })
 
 const EightTrigram = sequelize.define('EightTrigram', EightTrigramType, {

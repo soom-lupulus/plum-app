@@ -56,7 +56,10 @@ const yao_shi = computed(() => {
 
 // 应爻
 const yao_ying = computed(() => {
-    if (props.trigramInfo) return (props.trigramInfo.zhu.yao_shi + 3) % 6
+    if (props.trigramInfo){
+        const ying_num =(props.trigramInfo.zhu.yao_shi + 3) % 6
+        return ying_num === 0 ? 6 : ying_num
+    } 
     return -1
 })
 
@@ -65,12 +68,11 @@ const yao_ying = computed(() => {
  * 甲乙起青龙，丙丁起朱雀，戊起勾陈，己起螣蛇，庚辛起白虎，壬癸起玄武
  */
 const six_god = computed(() => (yao_num) => {
-    console.log(yao_num);
     
     const ganzhi = props.formData.gz_time
+    if(!ganzhi) return ''
     const rizhu = ganzhi.split(' ')[2]
     const rigan = rizhu.charAt(0)
-    console.log(rigan);
 
     const sg_map = {
         甲: '青龙',

@@ -68,7 +68,7 @@ var JIAZI = [
  * @param Array bazi 八字数组，数组元素从0-7，分别是年干、年支、月干、月支、日干、日支、时干、时支
  * @param boolean isman 性别，true为男，否则为女
  * @param int witch 查的是哪一柱，1，2，3，4分别代表年/月/日/时柱。其它分别是5大运，6流年，7流月，8流时。
- * @param String 年柱纳音,查询学堂、词馆神煞时用。例如：海中金
+ * @param String niannayin 年柱纳音,查询学堂、词馆神煞时用。例如：海中金
  * @returns Array 返回神煞数组
  */
 function queryShenSha(ganzhi, bazi, isman, witch, niannayin) {

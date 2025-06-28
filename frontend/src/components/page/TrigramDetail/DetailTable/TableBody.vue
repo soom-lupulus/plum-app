@@ -1,8 +1,9 @@
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, watchEffect } from 'vue'
 import { calcCFigure, calcGFigure, getTrigramFromCFigure, getTrigramFromGFigure, getWuxingFromCFigure, getWuxingFromGFigure } from 'plum-cg'
 import { wuxingColor } from '@/utils'
-import useShensha from '@/hooks/useShensha'
+import { allshensha } from '@/utils/allshensha'
+
 
 const props = defineProps({
     modalMode: String,
@@ -12,10 +13,6 @@ const props = defineProps({
     singleTrigramArr: Array
 })
 
-const shenshaArr = useShensha('甲', '寅')
-
-console.log(shenshaArr);
-console.log(shenshaArr.value.filter(i => i.on));
 
 
 const gz_timeArr = computed(() => {
@@ -28,6 +25,25 @@ const origin_trigram_c_figure_trigram = ref([])
 const origin_trigram_g_figure_trigram = ref([])
 const origin_trigram_c_figure_trigram_wuxing = ref([])
 const origin_trigram_g_figure_trigram_wuxing = ref([])
+const shensha = ref({
+    niansha: [],
+    jisha: [],
+    yuesha: [],
+    risha: [],
+})
+
+watchEffect(() => {
+    const gzStr = gz_timeArr.value.join(' ')
+    if(!gzStr) return
+    const { niansha, jisha, yuesha, risha } = allshensha(gzStr)
+    console.log(shensha);
+    shensha.value = {
+        niansha,
+        jisha,
+        yuesha,
+        risha,
+    }
+})
 
 /**
  * 先后天卦判断
@@ -126,37 +142,24 @@ const trigram_wuxing = computed(() => trigram_name => props.eightTrigramArr.find
                 :class="wuxingColor(i)">{{ i }}</td>
         </tr>
         <tr>
-            <th>神煞</th>
-            <td colspan="20">
-                <div class="shensha-wrapper">
-                    <n-tag v-for="shensha in shenshaArr.filter(i => i.on)" :type="shensha.good ? 'success' : 'error'"
-                        :key="shensha.name">
-                        <n-popover trigger="click" :width="250">
-                            <template #trigger>
-                                <span>{{ shensha.name }}</span>
-                            </template>
-                            <pre>{{ shensha.desc }}</pre>
-                        </n-popover>
-                    </n-tag>
-
-                </div>
-                <div>
-                    <n-collapse arrow-placement="right">
-                        <n-collapse-item title="查看未匹配" name="1">
-                            <div class="shensha-wrapper">
-                                <n-tag v-for="shensha in shenshaArr.filter(i => !i.on)"
-                                    :type="shensha.good ? 'success' : 'error'" :key="shensha.name">
-                                    <n-popover trigger="click" :width="250">
-                                        <template #trigger>
-                                            <span>{{ shensha.name }}</span>
-                                        </template>
-                                        <pre>{{ shensha.desc }}</pre>
-                                    </n-popover>
-                                </n-tag>
-                            </div>
-                        </n-collapse-item>
-                    </n-collapse>
-                </div>
+            <th rowspan="2">神煞</th>
+            <td colspan="5" style="text-align: center;">年煞</td>
+            <td colspan="5" style="text-align: center;">季煞</td>
+            <td colspan="5" style="text-align: center;">月煞</td>
+            <td colspan="5" style="text-align: center;">日煞</td>
+        </tr>
+        <tr class="shensha-content">
+            <td colspan="5" style="text-align: center;">
+                <p v-for="item in shensha.niansha" :key="item[0]">{{ item[0] + '-' + item[1] }}</p>
+            </td>
+            <td colspan="5" style="text-align: center;">
+                <p v-for="item in shensha.jisha" :key="item[0]">{{ item[0] + '-' + item[1] }}</p>
+            </td>
+            <td colspan="5" style="text-align: center;">
+                <p v-for="item in shensha.yuesha" :key="item[0]">{{ item[0] + '-' + item[1] }}</p>
+            </td>
+            <td colspan="5" style="text-align: center;">
+                <p v-for="item in shensha.risha" :key="item[0]">{{ item[0] + '-' + item[1] }}</p>
             </td>
         </tr>
         <tr>
@@ -183,16 +186,10 @@ tbody>tr:nth-of-type(even) {
     background-color: rgb(237 238 242);
 }
 
-.shensha-line-through {
-    text-decoration: line-through;
+.shensha-content {
+    vertical-align: top;
 }
 
-.shensha-wrapper {
-    width: 100%;
-    display: grid;
-    gap: 0.2rem;
-    grid-template-columns: repeat(auto-fill, minmax(4rem, 1fr));
-}
 
 @media screen and (320px <=width < 375px) {
 

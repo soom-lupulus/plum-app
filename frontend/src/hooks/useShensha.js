@@ -1,7 +1,7 @@
 import { ref, watch } from 'vue'
 import * as shenshaUtils from '@/utils/shensha'
 const useShensha = (rigan, dizhi) => {
-  const data = ref([])
+  const onData = ref([])
 
   /**-------吉神 */
   // 天乙贵人
@@ -42,7 +42,7 @@ const useShensha = (rigan, dizhi) => {
   // 天医
   const onTianyi = Boolean(shenshaUtils.tianyi(rigan, dizhi))
 
-  data.value = [
+  onData.value = [
     {
       name: '驿马',
       good: true,
@@ -147,7 +147,7 @@ const useShensha = (rigan, dizhi) => {
     // },
   ]
 
-  return data
+  return onData
 }
 
 export default useShensha
