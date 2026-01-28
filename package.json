@@ -1,12 +1,22 @@
 {
-    "private": true,
-    "workspaces": [
-        "frontend",
-        "backend"
-    ],
-    "scripts": {
-        "fe:dev": "yarn workspace frontend dev",
-        "be:dev": "yarn workspace backend start",
-        "fe:build": "yarn workspace frontend build"
-    }
+  "name": "my-monorepo",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm -r --parallel dev",
+    "fe:dev": "pnpm --filter frontend dev",
+    "be:dev": "pnpm --filter backend start",
+    "fe:build": "pnpm --filter frontend build",
+    "db:init": "pnpm --filter backend exec sequelize-cli init",
+    "db:migrate": "pnpm --filter backend exec sequelize-cli db:migrate",
+    "db:migrate:undo": "pnpm --filter backend exec sequelize-cli db:migrate:undo",
+    "db:migrate:status": "pnpm --filter backend exec sequelize-cli db:migrate:status",
+    "db:migrate:generate": "pnpm --filter backend exec sequelize-cli migration:generate",
+    "db:seed": "pnpm --filter backend exec sequelize-cli db:seed:all",
+    "db:reset": "pnpm db:migrate:undo:all && pnpm db:migrate",
+    "db:check": "node apps/backend/scripts/check-db-state.js",
+    "db:backup": "mysqldump -u root -p123456 plum_blossom > backup_db.sql"
+  },
+  "devDependencies": {
+    "sequelize-cli": "^6.6.5"
+  }
 }

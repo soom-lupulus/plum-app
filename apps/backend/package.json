@@ -4,7 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node src/main.js"
+    "start": "node src/main.js",
+    "dev": "nodemon src/main.js",
+    "migrate": "node scripts/migrate-on-start.js",
+    "db:generate": "node scripts/generate-migrations.js",
+    "db:check": "node scripts/check-db-state.js"
   },
   "author": "",
   "license": "ISC",
@@ -22,5 +26,8 @@
     "mysql2": "^3.10.3",
     "sequelize": "^6.37.3"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "sequelize-auto-migrations": "^1.0.3",
+    "nodemon": "^3.0.1"
+  }
 }
