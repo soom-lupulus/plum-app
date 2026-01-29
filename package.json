@@ -17,7 +17,9 @@
     "db:seed": "pnpm --filter backend exec sequelize-cli db:seed:all",
     "db:reset": "pnpm db:migrate:undo:all && pnpm db:migrate",
     "db:check": "node apps/backend/scripts/check-db-state.js",
-    "db:backup": "mysqldump -u root -p123456 plum_blossom > backup_db.sql"
+    "db:backup": "mysqldump -u root -p123456 plum_blossom > backup_db.sql",
+    "start:prod": "NODE_ENV=production pnpm --filter backend start",
+    "db:migrate:prod": "NODE_ENV=production pnpm --filter backend exec sequelize-cli db:migrate"
   },
   "devDependencies": {
     "sequelize-cli": "^6.6.5"
