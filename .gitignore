@@ -31,3 +31,7 @@ coverage
 
 # BACKEND
 .env
+
+# 忽略设计工具生成的元数据
+.shared/
+.roo/

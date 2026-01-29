@@ -3,9 +3,12 @@
   "private": true,
   "scripts": {
     "dev": "pnpm -r --parallel dev",
+    "build": "pnpm fe:build && pnpm fe:copy",
+    "start": "pnpm --filter backend start",
     "fe:dev": "pnpm --filter frontend dev",
     "be:dev": "pnpm --filter backend start",
     "fe:build": "pnpm --filter frontend build",
+    "fe:copy": "rm -rf apps/backend/public && cp -r apps/frontend/dist apps/backend/public",
     "db:init": "pnpm --filter backend exec sequelize-cli init",
     "db:migrate": "pnpm --filter backend exec sequelize-cli db:migrate",
     "db:migrate:undo": "pnpm --filter backend exec sequelize-cli db:migrate:undo",

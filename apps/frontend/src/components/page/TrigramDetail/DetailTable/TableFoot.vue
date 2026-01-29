@@ -66,8 +66,9 @@ const yao_ying = computed(() => {
  */
 const six_god = computed(() => (yao_num) => {
     console.log(yao_num);
-    
+
     const ganzhi = props.formData.gz_time
+    if (!ganzhi) return ''
     const rizhu = ganzhi.split(' ')[2]
     const rigan = rizhu.charAt(0)
     console.log(rigan);
@@ -149,26 +150,26 @@ const six_god = computed(() => (yao_num) => {
                     <div>
                         <div :class="wuxingColor(currentEightTrigram[0]?.wuxing)">{{
                             currentEightTrigram[0]?.wuxing
-                            }}</div>
+                        }}</div>
                         <div :class="wuxingColor(currentEightTrigram[1]?.wuxing)">{{
                             currentEightTrigram[1]?.wuxing
-                            }}</div>
+                        }}</div>
                     </div>
                     <div>
                         <div :class="wuxingColor(currentEightTrigram[2]?.wuxing)">{{
                             currentEightTrigram[2]?.wuxing
-                            }}</div>
+                        }}</div>
                         <div :class="wuxingColor(currentEightTrigram[3]?.wuxing)">{{
                             currentEightTrigram[3]?.wuxing
-                            }}</div>
+                        }}</div>
                     </div>
                     <div>
                         <div :class="wuxingColor(currentEightTrigram[4]?.wuxing)">{{
                             currentEightTrigram[4]?.wuxing
-                            }}</div>
+                        }}</div>
                         <div :class="wuxingColor(currentEightTrigram[5]?.wuxing)">{{
                             currentEightTrigram[5]?.wuxing
-                            }}</div>
+                        }}</div>
                     </div>
                 </div>
                 <!-- <p>爻辞</p> -->
